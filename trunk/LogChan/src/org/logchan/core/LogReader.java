@@ -36,6 +36,5 @@ public class LogReader {
 		return content.toString();
 
 	}
-    
-    
+       
 }
