@@ -1,25 +1,42 @@
 package org.logchan.ui;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
-import java.io.ObjectInputStream.GetField;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.*;
+
+import javax.swing.JButton;
+import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.JToolBar.Separator;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 
 import org.jdesktop.swingx.MultiSplitLayout.Divider;
 import org.jdesktop.swingx.MultiSplitLayout.Leaf;
 import org.jdesktop.swingx.MultiSplitLayout.Node;
 import org.jdesktop.swingx.MultiSplitLayout.Split;
 import org.jdesktop.swingx.MultiSplitPane;
+import org.logchan.core.ApacheLogParser;
 import org.logchan.core.LogReader;
 
 public class UserInterface extends JFrame implements ActionListener{
@@ -31,13 +48,11 @@ public class UserInterface extends JFrame implements ActionListener{
 	private JEditorPane logFileContentArea;
 	private JEditorPane templateDetailsArea;	
 	private JEditorPane templateSelectArea;
-	private JPanel graphArea;
 	private JTextField sourceFilePathField;
 	private JButton saveButton;
 	private JFileChooser fileChooser;
 	private String oldFileName = "";
-	private String fileName = "";
-	private String newFileName = "";
+	private String fileName = null;
 
 	private JButton templateButton;
 
@@ -66,6 +81,10 @@ public class UserInterface extends JFrame implements ActionListener{
 	private JMenuItem addServerMenuItem;
 
 	private JMenuItem addGroupMenuItem;
+	
+	List<String[]> messages = null;
+	private static final String ACTION_COMMAND_VIEW_TEMPLATE = "View Template";
+	private static final String ACTION_COMMAND_VIEW_RECOMENDATIONS = "View Recomendations";
 
 	public UserInterface() throws Exception {
 		initialize();
@@ -242,10 +261,12 @@ public class UserInterface extends JFrame implements ActionListener{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
+						parseFile();
 						getTemplateButton().setEnabled(true);
 						getRecomendationsButton().setEnabled(true);
-
 					} catch (Exception ex) {
+						getTemplateButton().setEnabled(false);
+						getRecomendationsButton().setEnabled(false);
 					}
 				}
 			});
@@ -264,8 +285,7 @@ public class UserInterface extends JFrame implements ActionListener{
 				int option = dialog.showOpenDialog(UserInterface.this);
 				if (option == JFileChooser.APPROVE_OPTION) {
 					try {
-						LogReader logReader = new LogReader();
-						String content = logReader.readFile(dialog.getSelectedFile()
+						String content = readFile(dialog.getSelectedFile()
 								.getAbsolutePath());
 						// System.out.println(content);
 						sourceFilePathField.setText(dialog.getSelectedFile()
@@ -331,14 +351,8 @@ public class UserInterface extends JFrame implements ActionListener{
 		if(templateButton == null){
 			templateButton = new JButton("View Template");
 			templateButton.setEnabled(false);
-			templateButton.addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					new TemplateViewer().setVisible(true);
-					
-				}
-			});
+			templateButton.setActionCommand(ACTION_COMMAND_VIEW_TEMPLATE);
+			templateButton.addActionListener(this);
 		}
 		return templateButton;
 	}
@@ -515,6 +529,22 @@ public class UserInterface extends JFrame implements ActionListener{
 	  }
 
 	
+	private String readFile(String fileName) throws IOException {
+		StringBuilder content = new StringBuilder("\n");
+		if (fileName != null && new File(fileName).exists()
+				&& new File(fileName).isFile()) {
+			this.fileName = fileName;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(new File(fileName))));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				content.append(line).append("\n");
+			}
+		}
+		return content.toString();
+
+	}
+
 	private String getTemplate() {
 		return "Please specify template";
 	}
@@ -524,9 +554,9 @@ public class UserInterface extends JFrame implements ActionListener{
 
 
 	    String actionCommand = e.getActionCommand();
-	    if (actionCommand.equals("RESTART"))
+	    if (actionCommand.equals(ACTION_COMMAND_VIEW_TEMPLATE))
 	    {
-	      
+	    	new TemplateViewer(messages).setVisible(true);
 	    }
 	    else if (actionCommand.equals("REFRESH"))
 	    {
@@ -593,5 +623,12 @@ public class UserInterface extends JFrame implements ActionListener{
 	    }
 
 	  
+	}
+	
+	private void parseFile() throws IOException{
+		if(fileName != null){
+			ApacheLogParser parser = new ApacheLogParser();
+			messages = parser.parseFile(fileName);
+		}
 	}
 }
