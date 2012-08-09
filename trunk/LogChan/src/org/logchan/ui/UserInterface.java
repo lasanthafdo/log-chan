@@ -20,6 +20,7 @@ import org.jdesktop.swingx.MultiSplitLayout.Leaf;
 import org.jdesktop.swingx.MultiSplitLayout.Node;
 import org.jdesktop.swingx.MultiSplitLayout.Split;
 import org.jdesktop.swingx.MultiSplitPane;
+import org.logchan.core.LogReader;
 
 public class UserInterface extends JFrame implements ActionListener{
 	/**
@@ -263,7 +264,8 @@ public class UserInterface extends JFrame implements ActionListener{
 				int option = dialog.showOpenDialog(UserInterface.this);
 				if (option == JFileChooser.APPROVE_OPTION) {
 					try {
-						String content = readFile(dialog.getSelectedFile()
+						LogReader logReader = new LogReader();
+						String content = logReader.readFile(dialog.getSelectedFile()
 								.getAbsolutePath());
 						// System.out.println(content);
 						sourceFilePathField.setText(dialog.getSelectedFile()
@@ -513,22 +515,6 @@ public class UserInterface extends JFrame implements ActionListener{
 	  }
 
 	
-	private String readFile(String fileName) throws IOException {
-		StringBuilder content = new StringBuilder("\n");
-		if (fileName != null && new File(fileName).exists()
-				&& new File(fileName).isFile()) {
-			this.fileName = fileName;
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(new File(fileName))));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				content.append(line).append("\n");
-			}
-		}
-		return content.toString();
-
-	}
-
 	private String getTemplate() {
 		return "Please specify template";
 	}
