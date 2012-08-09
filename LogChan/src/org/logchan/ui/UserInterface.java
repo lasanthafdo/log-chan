@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.io.ObjectInputStream.GetField;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
@@ -11,13 +12,16 @@ import javax.swing.JToolBar.Separator;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+
 import org.jdesktop.swingx.MultiSplitLayout.Divider;
 import org.jdesktop.swingx.MultiSplitLayout.Leaf;
 import org.jdesktop.swingx.MultiSplitLayout.Node;
 import org.jdesktop.swingx.MultiSplitLayout.Split;
 import org.jdesktop.swingx.MultiSplitPane;
 
-public class UserInterface extends JFrame {
+public class UserInterface extends JFrame implements ActionListener{
 	/**
 	 * 
 	 */
@@ -34,6 +38,34 @@ public class UserInterface extends JFrame {
 	private String fileName = "";
 	private String newFileName = "";
 
+	private JButton templateButton;
+
+	private JButton recomendationsButton;
+
+	private JMenuBar menuBar;
+
+	private JMenu fileMenu;
+
+	private JMenu editMenu;
+
+	private JMenu helpMenu;
+
+	private JMenuItem saveMenuItem;
+
+	private JMenuItem aboutMenuItem;
+
+	private JMenuItem helpMenuItem;
+
+	private JMenuItem removeMenuItem;
+
+	private JMenuItem refreshMenuItem;
+
+	private JMenuItem exitMenuItem;
+
+	private JMenuItem addServerMenuItem;
+
+	private JMenuItem addGroupMenuItem;
+
 	public UserInterface() throws Exception {
 		initialize();
 	}
@@ -43,6 +75,7 @@ public class UserInterface extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new GridBagLayout());
 		this.setSize(1000, 600);
+		this.setJMenuBar(getJJMenuBar());
 		GridBagConstraints constraints = new GridBagConstraints();
 		
 		constraints.weightx = 0.9;
@@ -56,13 +89,21 @@ public class UserInterface extends JFrame {
 
 		constraints.gridx = 0;
 		constraints.gridy = 1;
-		constraints.insets = new Insets(5, 10, 5, 10);
 		constraints.weighty = 1;
 		constraints.gridwidth = 2;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.insets = new Insets(0, 2, 0, 10);
 		
 		this.add(getSplitPane(), constraints);
+		
+		constraints.gridy = 2;
+		constraints.weightx = 1;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		this.add(new JPanel(),constraints);
+		constraints.weighty = 0;
+		constraints.gridx = 1;
+		constraints.fill = GridBagConstraints.NONE;
+		this.add(getBottomButtons(),constraints);
 	}
 
 	private MultiSplitPane getSplitPane() throws IOException {
@@ -200,7 +241,8 @@ public class UserInterface extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						// printTokens();
+						getTemplateButton().setEnabled(true);
+						getRecomendationsButton().setEnabled(true);
 
 					} catch (Exception ex) {
 					}
@@ -253,8 +295,7 @@ public class UserInterface extends JFrame {
 			// fileChooser.setApproveButtonText(approveButtonText) TODO
 			// fileChooser.setApproveButtonToolTipText(toolTipText)
 			fileChooser.setAcceptAllFileFilterUsed(false);
-			fileChooser
-					.setSelectedFile(new File(System.getProperty("user.dir")));
+			fileChooser.setSelectedFile(new File(System.getProperty("user.dir")));
 			fileChooser.setFileFilter(new FileFilter() {
 				@Override
 				public String getDescription() {
@@ -272,7 +313,206 @@ public class UserInterface extends JFrame {
 		}
 		return fileChooser;
 	}
+	
+	private JPanel getBottomButtons(){
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.anchor = GridBagConstraints.EAST;
+		panel.add(getTemplateButton(),constraints);
+		constraints.gridx = 1;
+		panel.add(getRecomendationsButton(),constraints);
+		return panel;
+	}
+   
+	private JButton getTemplateButton(){
+		if(templateButton == null){
+			templateButton = new JButton("View Template");
+			templateButton.setEnabled(false);
+			templateButton.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					new TemplateViewer().setVisible(true);
+					
+				}
+			});
+		}
+		return templateButton;
+	}
+	private JButton getRecomendationsButton(){
+		if(recomendationsButton == null){
+			recomendationsButton = new JButton("View Recomendations");
+			recomendationsButton.setEnabled(false);
+			recomendationsButton.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					
+					
+				}
+			});
+		}
+		return recomendationsButton;
+	}
+	
 
+	  private JMenuBar getJJMenuBar()
+	  {
+	    menuBar = new JMenuBar();
+	    GridBagConstraints fileMenuConstraints = new GridBagConstraints();
+	    fileMenuConstraints.gridx = 0;
+	    fileMenuConstraints.gridy = 1;
+	    fileMenuConstraints.gridheight = 1;
+	    fileMenuConstraints.gridwidth = 1;
+	    fileMenuConstraints.ipadx = 0;
+	    fileMenuConstraints.ipady = 0;
+	    fileMenuConstraints.fill = GridBagConstraints.NONE;
+	    fileMenuConstraints.anchor = GridBagConstraints.NORTH;
+	    fileMenuConstraints.insets = new Insets(0, 0, 0, 0);
+	    fileMenuConstraints.weightx = 0;
+	    fileMenuConstraints.weighty = 0;
+	    menuBar.add(getFileMenu(), fileMenuConstraints);
+
+	    GridBagConstraints editMenuConstraints = new GridBagConstraints();
+	    editMenuConstraints.gridx = 1;
+	    editMenuConstraints.gridy = 0;
+	    editMenuConstraints.gridheight = 1;
+	    editMenuConstraints.gridwidth = 1;
+	    editMenuConstraints.ipadx = 0;
+	    editMenuConstraints.ipady = 0;
+	    editMenuConstraints.fill = GridBagConstraints.NONE;
+	    editMenuConstraints.anchor = GridBagConstraints.NORTH;
+	    editMenuConstraints.insets = new Insets(0, 0, 0, 0);
+	    editMenuConstraints.weightx = 0;
+	    editMenuConstraints.weighty = 0;
+	    menuBar.add(getEditMenu(), editMenuConstraints);
+
+	    GridBagConstraints helpMenuConstraints = new GridBagConstraints();
+	    helpMenuConstraints.gridx = 2;
+	    helpMenuConstraints.gridy = 0;
+	    helpMenuConstraints.gridheight = 1;
+	    helpMenuConstraints.gridwidth = 1;
+	    helpMenuConstraints.ipadx = 0;
+	    helpMenuConstraints.ipady = 0;
+	    helpMenuConstraints.fill = GridBagConstraints.NONE;
+	    helpMenuConstraints.anchor = GridBagConstraints.NORTH;
+	    helpMenuConstraints.insets = new Insets(0, 0, 0, 0);
+	    helpMenuConstraints.weightx = 0;
+	    helpMenuConstraints.weighty = 0;
+	    menuBar.add(getHelpMenu(), helpMenuConstraints);
+
+	    return menuBar;
+	  }
+
+	  private JMenu getFileMenu()
+	  {
+	    fileMenu = new JMenu();
+	    fileMenu.setText("File");
+	    fileMenu.add(getAddGroupMenuItem());
+	    fileMenu.add(getAddServerMenuItem());
+	    fileMenu.add(getSaveMenuItem(true));
+	    fileMenu.add(getExitMenuItem());
+
+	    return fileMenu;
+	  }
+
+	  private JMenu getEditMenu()
+	  {
+	    editMenu = new JMenu();
+	    editMenu.setText("Edit");
+	    editMenu.add(getRefreshMenuItem());
+	    editMenu.add(getRemoveMenuItem());
+	    return editMenu;
+	  }
+
+	  private JMenu getHelpMenu()
+	  {
+	    helpMenu = new JMenu();
+	    helpMenu.setText("Help");
+	    helpMenu.add(getHelpMenuItem());
+	    helpMenu.add(getAboutMenuItem());
+
+	    return helpMenu;
+	  }
+	  
+	  private JMenuItem getAddGroupMenuItem()
+	  {
+	    addGroupMenuItem = new JMenuItem("Add A Group");
+	    addGroupMenuItem.setActionCommand("ADD_GROUP");
+	    addGroupMenuItem.addActionListener(this);
+	    return addGroupMenuItem;
+	  }
+
+	  private JMenuItem getAddServerMenuItem()
+	  {
+	    addServerMenuItem = new JMenuItem("Add a server");
+	    addServerMenuItem.setActionCommand("ADD_SERVER");
+	    addServerMenuItem.addActionListener(this);
+	    return addServerMenuItem;
+	  }
+
+	  private JMenuItem getExitMenuItem()
+	  {
+	    exitMenuItem = new JMenuItem("Exit");
+	    exitMenuItem.setActionCommand("EXIT");
+	    exitMenuItem.addActionListener(this);
+	    return exitMenuItem;
+	  }
+
+	  private JMenuItem getRefreshMenuItem()
+	  {
+
+	    refreshMenuItem = new JMenuItem("Refresh");
+	    refreshMenuItem.setActionCommand("REFRESH");
+	    refreshMenuItem.addActionListener(this);
+	    return refreshMenuItem;
+	  }
+
+	  private JMenuItem getRemoveMenuItem()
+	  {
+
+	    removeMenuItem = new JMenuItem("Remove");
+	    removeMenuItem.setActionCommand("REMOVE");
+	    removeMenuItem.addActionListener(this);
+	    return removeMenuItem;
+	  }
+
+	  private JMenuItem getHelpMenuItem()
+	  {
+
+	    helpMenuItem = new JMenuItem("Help");
+	    helpMenuItem.setActionCommand("HELP");
+	    helpMenuItem.addActionListener(this);
+	    return helpMenuItem;
+	  }
+
+	  private JMenuItem getAboutMenuItem()
+	  {
+
+	    aboutMenuItem = new JMenuItem("About");
+	    aboutMenuItem.setActionCommand("VIEW_ABOUT");
+	    aboutMenuItem.addActionListener(this);
+	    return aboutMenuItem;
+	  }
+
+	  public JMenuItem getSaveMenuItem(boolean initialize)
+	  {
+	    if (initialize)
+	    {
+	      saveMenuItem = new JMenuItem("Save");
+	      saveMenuItem.setActionCommand("SAVE");
+	      saveMenuItem.addActionListener(this);
+	      return saveMenuItem;
+	    }
+	    else
+	    {
+	      return saveMenuItem;
+	    }
+
+	  }
+
+	
 	private String readFile(String fileName) throws IOException {
 		StringBuilder content = new StringBuilder("\n");
 		if (fileName != null && new File(fileName).exists()
@@ -291,5 +531,81 @@ public class UserInterface extends JFrame {
 
 	private String getTemplate() {
 		return "Please specify template";
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+
+
+	    String actionCommand = e.getActionCommand();
+	    if (actionCommand.equals("RESTART"))
+	    {
+	      
+	    }
+	    else if (actionCommand.equals("REFRESH"))
+	    {
+	      
+	    }
+	    else if (actionCommand.equals("RENAME_GROUP"))
+	    {
+
+	    }
+	    else if (actionCommand.equals("RENAME_SERVER"))
+	    {
+	    }
+	    else if (actionCommand.equals("SAVE"))
+	    {
+
+	      try
+	      {
+	        
+	      }
+	      catch (Exception e1)
+	      {
+	        
+	      }
+	    }
+	    else if (actionCommand.equals("SERVER_PROPERTIES"))
+	    {
+
+	    }
+	    else if (actionCommand.equals("ADD_GROUP"))
+	    {
+	    }
+	    else if (actionCommand.equals("START"))
+	    {
+	      
+
+	    }
+	    else if (actionCommand.equals("STOP"))
+	    {
+	      
+	    }
+	    else if (actionCommand.equals("PROPERTIES"))
+	    {}
+	    else if (actionCommand.equals("ADD_SERVER"))
+	    {}
+	    else if (actionCommand.equals("REMOVE"))
+	    {
+	    }
+	    else if (actionCommand.equals("VIEW_ABOUT"))
+	    {
+	    }
+	    else if (actionCommand.equals("EXIT"))
+	    {}
+	    else if (actionCommand.equals("HELP"))
+	    {
+	      try
+	      {
+	        File f = new File(".");
+	        String path = f.getCanonicalPath() + "\\help.html";
+	        Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + path);
+	      }
+	      catch (Exception e1)
+	      {
+	      }
+	    }
+
+	  
 	}
 }
