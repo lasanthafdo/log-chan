@@ -16,334 +16,277 @@ import javax.rules.admin.RuleExecutionSet;
 
 import org.jcp.jsr94.tck.model.Customer;
 import org.jcp.jsr94.tck.model.Invoice;
-
+import org.logchan.model.SourceApplication;
+import org.logchan.model.WebServerLog;
+import org.logchan.rules.RuleManager;
 
 public class RuleExample {
 
-   // The rule service provider URI as defined by the reference implementation.
+	// The rule service provider URI as defined by the reference implementation.
 
-   private static final String RULE_SERVICE_PROVIDER = "org.jcp.jsr94.jess";
+	private static final String RULE_SERVICE_PROVIDER = "org.jcp.jsr94.jess";
 
+	/**
+	 * 
+	 * Main entry point.
+	 */
 
+	public static void main(String[] args) {
 
-   /**
+		try {
 
-    * Main entry point.
+			// Load the rule service provider of the reference implementation.
 
-    */
+			// Loading this class will automatically register this provider with
+			// the
 
-   public static void main(String[] args) {
+			// provider manager.
 
-      try {
+			Class.forName("org.jcp.jsr94.jess.RuleServiceProviderImpl");
 
-         // Load the rule service provider of the reference implementation.
+			// Get the rule service provider from the provider manager.
 
-         // Loading this class will automatically register this provider with the
+			RuleServiceProvider serviceProvider =
 
-         // provider manager.
+			RuleServiceProviderManager
+					.getRuleServiceProvider(RULE_SERVICE_PROVIDER);
 
-         Class.forName("org.jcp.jsr94.jess.RuleServiceProviderImpl");
+			// Get the rule administrator.
 
+			RuleAdministrator ruleAdministrator = serviceProvider
+					.getRuleAdministrator();
 
+			System.out.println("\nAdministration API\n");
 
-         // Get the rule service provider from the provider manager.
+			System.out.println("Acquired RuleAdministrator: "
+					+ ruleAdministrator);
 
-         RuleServiceProvider serviceProvider = 
+			// Get an input stream to a test XML ruleset.
 
-             RuleServiceProviderManager.getRuleServiceProvider(RULE_SERVICE_PROVIDER);
+			// This rule execution set is part of the TCK.
 
+			InputStream inStream = RuleManager.class
+					.getResourceAsStream("/org/logchan/rules/size_rules.xml");
 
+			System.out.println("Acquired InputStream to RI size_rules.xml: "
+					+ inStream);
 
-         // Get the rule administrator.
+			// Parse the ruleset from the XML document.
 
-         RuleAdministrator ruleAdministrator = serviceProvider.getRuleAdministrator();
+			RuleExecutionSet res1 =
 
-         System.out.println("\nAdministration API\n");
+			ruleAdministrator.getLocalRuleExecutionSetProvider(
 
-         System.out.println("Acquired RuleAdministrator: " + ruleAdministrator);
+			null).createRuleExecutionSet(inStream, null);
 
+			inStream.close();
 
+			System.out.println("Loaded RuleExecutionSet: " + res1);
 
-         // Get an input stream to a test XML ruleset.
+			// Register the rule execution set.
 
-         // This rule execution set is part of the TCK.
+			String uri = res1.getName();
 
-         InputStream inStream =
+			ruleAdministrator.registerRuleExecutionSet(uri, res1, null);
 
-             org.jcp.jsr94.tck.model.Customer.class.getResourceAsStream(
+			System.out.println("Bound RuleExecutionSet to URI: " + uri);
 
-             "/org/jcp/jsr94/tck/tck_res_1.xml");
+			// Get a RuleRuntime and invoke the rule engine.
 
-         System.out.println("Acquired InputStream to RI tck_res_1.xml: " + inStream);
+			System.out.println("\nRuntime API\n");
 
+			RuleRuntime ruleRuntime = serviceProvider.getRuleRuntime();
 
+			System.out.println("Acquired RuleRuntime: " + ruleRuntime);
 
-         // Parse the ruleset from the XML document.
+			// Create a statelessRuleSession.
 
-         RuleExecutionSet res1 =
+			StatelessRuleSession statelessRuleSession =
 
-            ruleAdministrator.getLocalRuleExecutionSetProvider(
+			(StatelessRuleSession) ruleRuntime.createRuleSession(uri,
 
-            null).createRuleExecutionSet( inStream, null );
+			new HashMap(), RuleRuntime.STATELESS_SESSION_TYPE);
 
-         inStream.close();
+			System.out.println("Got Stateless Rule Session: "
+					+ statelessRuleSession);
 
-         System.out.println("Loaded RuleExecutionSet: " + res1);
+			// Create a customer as specified by the TCK documentation.
 
+			// Then call executeRules on the input objects.
 
+			WebServerLog webLog = new WebServerLog("test.log");
 
-         // Register the rule execution set.
+			webLog.setFileSize(5000);
+			webLog.setLineCount(3000);
 
-         String uri = res1.getName();
+			// Create an invoice as specified by the TCK documentation.
 
-         ruleAdministrator.registerRuleExecutionSet(uri, res1, null);
+			SourceApplication app = new SourceApplication("Apache Web Server");
 
-         System.out.println("Bound RuleExecutionSet to URI: " + uri);
+			app.setStandardLogRate(2000);
 
+			// Create an input list.
 
+			List input = new ArrayList();
 
-         // Get a RuleRuntime and invoke the rule engine.
+			input.add(webLog);
+			input.add(app);
 
-         System.out.println("\nRuntime API\n");
+			// Print the input.
 
-         RuleRuntime ruleRuntime = serviceProvider.getRuleRuntime();
+			System.out.println("Calling rule session with the following data");
 
-         System.out.println("Acquired RuleRuntime: " + ruleRuntime);
+			System.out.println("Log file line count: " + webLog.getLineCount());
 
+			System.out.println(app.getApplicationName() + " log rate: " + app.getStandardLogRate());
 
+			// Execute the rules without a filter.
 
-         // Create a statelessRuleSession.
+			List results = statelessRuleSession.executeRules(input);
 
-         StatelessRuleSession statelessRuleSession = 
+			System.out
+					.println("Called executeRules on Stateless Rule Session: " +
 
-             (StatelessRuleSession) ruleRuntime.createRuleSession(uri, 
+					statelessRuleSession);
 
-              new HashMap(), RuleRuntime.STATELESS_SESSION_TYPE);
+			System.out.println("Result of calling executeRules: "
+					+ results.size() +
 
+					" results.");
 
+			// Loop over the results.
 
-         System.out.println("Got Stateless Rule Session: " + statelessRuleSession);
+			Iterator itr = results.iterator();
 
+			while (itr.hasNext()) {
 
+				Object obj = itr.next();
 
-         // Create a customer as specified by the TCK documentation.
+				if (obj instanceof WebServerLog)
 
-         // Then call executeRules on the input objects.
+					System.out.println("Log file size status: " +
 
-         Customer inputCustomer = new Customer("test");
+					((WebServerLog) obj).getLogSizeStatus());
 
-         inputCustomer.setCreditLimit(5000);
+				if (obj instanceof SourceApplication)
+					System.out.println(((SourceApplication) obj).getApplicationName() + " log rate: " 
+							+ ((SourceApplication) obj).getStandardLogRate() + " rating: " 
+							+ ((SourceApplication) obj).getApplicationRating());
 
+			}
 
+			// Release the session.
 
-         // Create an invoice as specified by the TCK documentation.
+			statelessRuleSession.release();
 
-         Invoice inputInvoice = new Invoice("Invoice 1");
+			System.out.println("Released Stateless Rule Session.");
 
-         inputInvoice.setAmount(2000);
+			// Create a statefulRuleSession.
 
+			StatefulRuleSession statefulRuleSession =
 
+			(StatefulRuleSession) ruleRuntime.createRuleSession(uri,
 
-         // Create an input list.
+			new HashMap(), RuleRuntime.STATEFUL_SESSION_TYPE);
 
-         List input = new ArrayList();
+			System.out.println("Got Stateful Rule Session: "
+					+ statefulRuleSession);
 
-         input.add(inputCustomer);
+			// Add another invoice.
+			
+			Customer inputCustomer = new Customer("test");
+			inputCustomer.setCreditLimit(2000);
 
-         input.add(inputInvoice);
+			Invoice inputInvoice2 = new Invoice("Invoice 2");
 
+			inputInvoice2.setAmount(1750);
 
+			input.add(inputCustomer);
+			input.add(inputInvoice2);
 
-         // Print the input.
+			System.out.println("Calling rule session with the following data");
 
-         System.out.println("Calling rule session with the following data");
+			System.out.println("Customer credit limit input: " +
 
-         System.out.println("Customer credit limit input: " +
+			inputCustomer.getCreditLimit());
 
-              inputCustomer.getCreditLimit());
+			System.out.println(inputInvoice2.getDescription() +
 
-         System.out.println(inputInvoice.getDescription() +
+			" amount: " + inputInvoice2.getAmount() +
 
-              " amount: " + inputInvoice.getAmount() +
+			" status: " + inputInvoice2.getStatus());
 
-              " status: " + inputInvoice.getStatus());
+			// Add an object to the statefulRuleSession.
 
+			statefulRuleSession.addObjects(input);
 
+			System.out.println("Called addObject on Stateful Rule Session: " +
 
-         // Execute the rules without a filter.
+			statefulRuleSession);
 
-         List results = statelessRuleSession.executeRules(input);
+			statefulRuleSession.executeRules();
 
+			System.out.println("Called executeRules");
 
+			// Extract the objects from the statefulRuleSession.
 
-         System.out.println("Called executeRules on Stateless Rule Session: " +
+			results = statefulRuleSession.getObjects();
 
-              statelessRuleSession);
+			System.out.println("Result of calling getObjects: "
+					+ results.size() +
 
+					" results.");
 
+			// Loop over the results.
 
-         System.out.println("Result of calling executeRules: " + results.size() +
+			itr = results.iterator();
 
-              " results.");
+			while (itr.hasNext()) {
 
+				Object obj = itr.next();
 
+				if (obj instanceof Customer)
 
-         // Loop over the results.
+					System.out.println("Customer credit limit result: " +
 
-         Iterator itr = results.iterator();
+					((Customer) obj).getCreditLimit());
 
-         while(itr.hasNext()) {
+				if (obj instanceof Invoice)
 
-            Object obj = itr.next();
+					System.out.println(((Invoice) obj).getDescription() +
 
-            if (obj instanceof Customer)
+					" amount: " + ((Invoice) obj).getAmount() +
 
-                System.out.println("Customer credit limit result: " +
+					" status: " + ((Invoice) obj).getStatus());
 
-                 ((Customer) obj).getCreditLimit());
+			}
 
-            if (obj instanceof Invoice)
+			// Release the statefulRuleSession.
 
-                System.out.println(((Invoice) obj).getDescription() +
+			statefulRuleSession.release();
 
-                " amount: " + ((Invoice) obj).getAmount() + " status: " +
+			System.out.println("Released Stateful Rule Session.");
 
-                ((Invoice) obj).getStatus());
+			System.out.println();
 
-         }
+		} catch (NoClassDefFoundError e) {
 
+			if (e.getMessage().indexOf("JessException") != -1) {
 
+				System.err.println("Error: The RI Jess could not be found.");
 
-         // Release the session.
+			} else {
 
-         statelessRuleSession.release();
+				System.err.println("Error: " + e.getMessage());
 
-         System.out.println("Released Stateless Rule Session.");
+			}
 
+		} catch (Exception e) {
 
+			e.printStackTrace();
 
-         // Create a statefulRuleSession.
+		}
 
-         StatefulRuleSession statefulRuleSession = 
-
-             (StatefulRuleSession) ruleRuntime.createRuleSession(uri,
-
-              new HashMap(), RuleRuntime.STATEFUL_SESSION_TYPE);
-
-
-
-         System.out.println("Got Stateful Rule Session: " + statefulRuleSession);
-
-
-
-         // Add another invoice.
-
-         Invoice inputInvoice2 = new Invoice("Invoice 2");
-
-         inputInvoice2.setAmount(1750);
-
-         input.add(inputInvoice2);
-
-         System.out.println("Calling rule session with the following data");
-
-         System.out.println("Customer credit limit input: " +
-
-              inputCustomer.getCreditLimit());
-
-         System.out.println(inputInvoice.getDescription() +
-
-              " amount: " + inputInvoice.getAmount() +
-
-              " status: " + inputInvoice.getStatus());
-
-         System.out.println(inputInvoice2.getDescription() +
-
-              " amount: " + inputInvoice2.getAmount() +
-
-              " status: " + inputInvoice2.getStatus());
-
-
-
-         // Add an object to the statefulRuleSession.
-
-         statefulRuleSession.addObjects(input);
-
-         System.out.println("Called addObject on Stateful Rule Session: "+
-
-              statefulRuleSession);
-
-
-
-         statefulRuleSession.executeRules();
-
-         System.out.println("Called executeRules");
-
-
-
-         // Extract the objects from the statefulRuleSession.
-
-         results = statefulRuleSession.getObjects();
-
-
-
-         System.out.println("Result of calling getObjects: " + results.size() +
-
-              " results.");
-
-
-
-         // Loop over the results.
-
-         itr = results.iterator();
-
-         while(itr.hasNext()) {
-
-            Object obj = itr.next();
-
-            if (obj instanceof Customer)
-
-               System.out.println("Customer credit limit result: " +
-
-                ((Customer) obj).getCreditLimit());
-
-            if (obj instanceof Invoice)
-
-	       System.out.println(((Invoice) obj).getDescription() +
-
-                    " amount: " + ((Invoice) obj).getAmount() +
-
-                    " status: " + ((Invoice) obj).getStatus());
-
-         }
-
-
-
-         // Release the statefulRuleSession.
-
-         statefulRuleSession.release();
-
-         System.out.println( "Released Stateful Rule Session." );
-
-         System.out.println();
-
-      } catch (NoClassDefFoundError e) {
-
-         if (e.getMessage().indexOf("JessException") != -1) {
-
-            System.err.println("Error: The RI Jess could not be found.");
-
-         } else {
-
-            System.err.println("Error: " + e.getMessage());
-
-         }
-
-      } catch (Exception e) {
-
-         e.printStackTrace();
-
-      }
-
-   }
+	}
 
 }
