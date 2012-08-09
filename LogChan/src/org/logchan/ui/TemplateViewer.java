@@ -52,7 +52,8 @@ public class TemplateViewer extends JDialog{
 		constraints.weightx = 0;
 		constraints.gridx = 1;
 		this.add(getButtons(),constraints);
-	}	
+	}
+	
 	private JPanel getButtons(){
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints constraints = new  GridBagConstraints();
@@ -61,6 +62,7 @@ public class TemplateViewer extends JDialog{
 		panel.add(getCloseButton(),constraints);
 		return panel;
 	}
+	
 	private JButton getSaveButton(){
 		if(save == null){
 			save = new JButton("Save");

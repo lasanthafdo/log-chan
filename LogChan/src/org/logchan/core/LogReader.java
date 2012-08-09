@@ -4,24 +4,38 @@
  */
 package org.logchan.core;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.logchan.ui.UserInterface;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  *
  * @author SAMILA
  */
 public class LogReader {
+	private String fileName;
     
-    public static void main(String []args)
-    {
-        try {
-            new UserInterface().setVisible(true);
-        } catch (Exception ex) {
-            Logger.getLogger(LogReader.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+	public String getFileName() {
+		return fileName;
+	}
+
+	public String readFile(String fileName) throws IOException {
+		StringBuilder content = new StringBuilder("\n");
+		if (fileName != null && new File(fileName).exists()
+				&& new File(fileName).isFile()) {
+			this.fileName = fileName;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(new File(fileName))));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				content.append(line).append("\n");
+			}
+		}
+		return content.toString();
+
+	}
+    
     
 }
