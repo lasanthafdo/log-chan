@@ -2,6 +2,7 @@ package org.logchan.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -9,16 +10,17 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
+import org.logchan.core.ApacheLogParser;
 import org.logchan.model.TableData;
 
 public class TemplateViewer extends JDialog{
 	private JButton save;
 	private JButton close;
+	List<String[]> messages;
 
-	public TemplateViewer(){
-		initialize();
-		
-		
+	public TemplateViewer(List<String[]> messages){
+		this.messages = messages;
+		initialize();		
 	}
 	
 	private void initialize(){
@@ -29,18 +31,25 @@ public class TemplateViewer extends JDialog{
 		constraints.weighty = 1;
 		constraints.gridwidth = 2;
 		constraints.fill = GridBagConstraints.BOTH;
+		
 		Vector<String> columnNames = new Vector<String>();
-		columnNames.add(0,"C1");
-		columnNames.add(1,"C2");
+		columnNames.add("Col 1");
+		columnNames.add("Col 2");
+		columnNames.add("Col 3");
+		columnNames.add("Col 4");
+		columnNames.add("Col 5");
+		columnNames.add("Col 6");
+		columnNames.add("Col 7");
+		columnNames.add("Col 8");
+		columnNames.add("Col 9");
 		Vector<Vector<String>> data = new Vector<Vector<String>>();
-		Vector<String> data1 = new Vector<String>();
-		data1.add(0,"D1C1");
-		data1.add(1,"D1C2");
-		data.add(0,data1);
-		Vector<String> data2 = new Vector<String>();
-		data2.add(0,"D2C2");
-		data2.add(1,"D2C2");
-		data.add(1,data2);
+		for(String[] message:messages){
+			Vector<String> element = new Vector<String>();
+			for(int i=0;i<ApacheLogParser.NUM_FIELDS;i++){
+				element.add(i,message[i]);	
+			}
+			data.add(element);
+		}		
 		this.add(new Template(data,columnNames),constraints);
 		constraints.gridwidth = 1;
 		constraints.gridy = 1;
@@ -80,7 +89,12 @@ public class TemplateViewer extends JDialog{
 	
 	private class Template extends JTable{		
 		
-	   private Template(Vector<Vector<String>> data, Vector<String> columnNames){	   
+	   /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+	private Template(Vector<Vector<String>> data, Vector<String> columnNames){	   
 		   TableData model = new TableData(data,columnNames);
 		   this.setModel(model.getModel());
 	   }
