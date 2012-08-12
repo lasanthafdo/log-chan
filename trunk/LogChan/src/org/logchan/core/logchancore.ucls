@@ -1,0 +1,42 @@
+<class-diagram version="1.0.9" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="org.logchan.core.LogChanApp" project="LogChan" 
+    file="/LogChan/src/org/logchan/core/LogChanApp.java" binary="false">    
+    <position height="-1" width="-1" x="423" y="265"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="org.logchan.core.LogReader" project="LogChan" 
+    file="/LogChan/src/org/logchan/core/LogReader.java" binary="false">    
+    <position height="146" width="192" x="72" y="195"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <package id="3" corner="BOTTOM_RIGHT" language="java" name="org.logchan.core" project="LogChan" 
+    file="/LogChan/src/org/logchan/core" binary="false">    
+    <position height="49" width="120" x="120" y="81"/>    
+    <display autosize="true" stereotype="true"/>  
+  </package>  
+  <interface id="4" corner="BOTTOM_RIGHT" language="java" name="org.logchan.core.LogParseable" project="LogChan" 
+    file="/LogChan/src/org/logchan/core/LogParseable.java" binary="false">    
+    <position height="78" width="201" x="315" y="95"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <dependency id="5">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true"/>    
+    <operations public="true" package="true" protected="true" private="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

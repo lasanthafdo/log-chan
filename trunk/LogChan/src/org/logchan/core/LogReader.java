@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
@@ -21,6 +22,7 @@ public class LogReader {
 		return fileName;
 	}
 
+	@Deprecated
 	public String readFile(String fileName) throws IOException {
 		StringBuilder content = new StringBuilder("\n");
 		if (fileName != null && new File(fileName).exists()
@@ -35,6 +37,16 @@ public class LogReader {
 		}
 		return content.toString();
 
+	}
+	
+	public InputStream getInputStream(String fileName) throws IOException {
+		if (fileName != null && new File(fileName).exists()
+				&& new File(fileName).isFile()) {
+				this.fileName = fileName;
+				return new FileInputStream(new File(fileName));
+		}
+		
+		return null;
 	}
        
 }

@@ -14,6 +14,11 @@ import org.logchan.core.ApacheLogParser;
 import org.logchan.model.TableData;
 
 public class TemplateViewer extends JDialog{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6755248784737848181L;
+	
 	private JButton save;
 	private JButton close;
 	List<String[]> messages;

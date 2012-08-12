@@ -15,7 +15,7 @@ public class LogChanApp {
 		// TODO Auto-generated method stub
         try {
             new UserInterface().setVisible(true);
-            new RuleManager().invokeExample();
+            //new RuleManager().invokeExample();
         } catch (Exception ex) {
             Logger.getLogger(LogReader.class.getName()).log(Level.SEVERE, null, ex);
         }

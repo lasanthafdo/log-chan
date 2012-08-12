@@ -1,0 +1,46 @@
+<class-diagram version="1.0.9" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="org.logchan.ui.TemplateViewer.Template" project="LogChan" 
+    file="/LogChan/src/org/logchan/ui/TemplateViewer.java" binary="false">    
+    <position height="-1" width="-1" x="366" y="346"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="org.logchan.ui.TemplateViewer" project="LogChan" 
+    file="/LogChan/src/org/logchan/ui/TemplateViewer.java" binary="false">    
+    <position height="-1" width="-1" x="367" y="147"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <package id="3" corner="BOTTOM_RIGHT" language="java" name="org.logchan.ui" project="LogChan" 
+    file="/LogChan/src/org/logchan/ui" binary="false">    
+    <position height="49" width="104" x="68" y="16"/>    
+    <display autosize="true" stereotype="true"/>  
+  </package>  
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="org.logchan.ui.UserInterface" project="LogChan" 
+    file="/LogChan/src/org/logchan/ui/UserInterface.java" binary="false">    
+    <position height="1013" width="286" x="597" y="-361"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <nesting id="5">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </nesting>  
+  <dependency id="6">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true"/>    
+    <operations public="true" package="true" protected="true" private="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
