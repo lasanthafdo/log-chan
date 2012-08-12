@@ -33,7 +33,8 @@ import org.jdesktop.swingx.MultiSplitLayout.Leaf;
 import org.jdesktop.swingx.MultiSplitLayout.Node;
 import org.jdesktop.swingx.MultiSplitLayout.Split;
 import org.jdesktop.swingx.MultiSplitPane;
-import org.logchan.core.ApacheLogParser;
+import org.logchan.core.DefaultFlowController;
+import org.logchan.core.FlowControllable;
 import org.logchan.core.LogReader;
 
 public class UserInterface extends JFrame implements ActionListener {
@@ -48,48 +49,37 @@ public class UserInterface extends JFrame implements ActionListener {
 	private JTextField sourceFilePathField;
 	private JButton saveButton;
 	private JFileChooser fileChooser;
-	private String oldFileName = "";
-
-	private String fileName = null;
+	private FlowControllable flowController = null;
+	private String filename = null;
 
 	private JButton templateButton;
-
 	private JButton recomendationsButton;
-
 	private JMenuBar menuBar;
-
 	private JMenu fileMenu;
-
 	private JMenu editMenu;
-
 	private JMenu helpMenu;
-
 	private JMenuItem saveMenuItem;
-
 	private JMenuItem aboutMenuItem;
-
 	private JMenuItem helpMenuItem;
-
 	private JMenuItem removeMenuItem;
-
 	private JMenuItem refreshMenuItem;
-
 	private JMenuItem exitMenuItem;
 
 	private JMenuItem addServerMenuItem;
-
 	private JMenuItem addGroupMenuItem;
 
 	List<String[]> messages = null;
+
 	private static final String ACTION_COMMAND_VIEW_TEMPLATE = "View Template";
 	private static final String ACTION_COMMAND_VIEW_RECOMENDATIONS = "View Recomendations";
 
 	public UserInterface() throws Exception {
-		initialize();
+		flowController = DefaultFlowController.getInstance();
+		initializeUi();
 	}
 
 	// TODO i18n
-	private void initialize() throws Exception {
+	private void initializeUi() throws Exception {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new GridBagLayout());
 		this.setSize(1000, 600);
@@ -245,12 +235,11 @@ public class UserInterface extends JFrame implements ActionListener {
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.insets = new Insets(10, 2, 0, 2);
-		panel.add(getRunButton(getSourceFilePathField().getText().trim()),
-				constraints);
+		panel.add(getRunButton());
 		return panel;
 	}
 
-	private JButton getRunButton(String fileName) throws IOException {
+	private JButton getRunButton() throws IOException {
 		if (saveButton == null) {
 			saveButton = new JButton("Run");
 			saveButton.setToolTipText("run");
@@ -259,7 +248,8 @@ public class UserInterface extends JFrame implements ActionListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						parseFile();
+						List<String[]> parsedMsgs = flowController.parseFile(filename);
+						flowController.printMetaData();
 						getTemplateButton().setEnabled(true);
 						getRecomendationsButton().setEnabled(true);
 					} catch (Exception ex) {
@@ -284,8 +274,8 @@ public class UserInterface extends JFrame implements ActionListener {
 				int option = dialog.showOpenDialog(UserInterface.this);
 				if (option == JFileChooser.APPROVE_OPTION) {
 					try {
-						String content = new LogReader().readFile(dialog
-								.getSelectedFile().getAbsolutePath());
+						filename = dialog.getSelectedFile().getAbsolutePath();
+						String content = new LogReader().readFile(filename);
 						sourceFilePathField.setText(dialog.getSelectedFile()
 								.getAbsolutePath());
 						getLogFileContentArea().setText(content);
@@ -301,7 +291,7 @@ public class UserInterface extends JFrame implements ActionListener {
 
 	private JTextField getSourceFilePathField() {
 		if (sourceFilePathField == null) {
-			sourceFilePathField = new JTextField(oldFileName);
+			sourceFilePathField = new JTextField(filename);
 		}
 		return sourceFilePathField;
 	}
@@ -555,12 +545,5 @@ public class UserInterface extends JFrame implements ActionListener {
 			}
 		}
 
-	}
-
-	private void parseFile() throws IOException {
-		if (fileName != null) {
-			ApacheLogParser parser = new ApacheLogParser();
-			messages = parser.parseFile(fileName);
-		}
 	}
 }

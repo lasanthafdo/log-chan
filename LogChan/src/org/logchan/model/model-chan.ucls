@@ -1,0 +1,58 @@
+<class-diagram version="1.0.9" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="org.logchan.core.LogReader" project="LogChan" 
+    file="/LogChan/src/org/logchan/core/LogReader.java" binary="false">    
+    <position height="-1" width="-1" x="649" y="267"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="2" corner="BOTTOM_RIGHT" language="java" name="org.logchan.model.LogFile" project="LogChan" 
+    file="/LogChan/src/org/logchan/model/LogFile.java" binary="false">    
+    <position height="-1" width="-1" x="187" y="228"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="org.logchan.model.SourceApplication" project="LogChan" 
+    file="/LogChan/src/org/logchan/model/SourceApplication.java" binary="false">    
+    <position height="-1" width="-1" x="404" y="188"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <package id="4" corner="BOTTOM_RIGHT" language="java" name="org.logchan.model" project="LogChan" 
+    file="/LogChan/src/org/logchan/model" binary="false">    
+    <position height="-1" width="-1" x="109" y="56"/>    
+    <display autosize="true" stereotype="true"/>  
+  </package>  
+  <class id="5" corner="BOTTOM_RIGHT" language="java" name="org.logchan.model.WebServerLog" project="LogChan" 
+    file="/LogChan/src/org/logchan/model/WebServerLog.java" binary="false">    
+    <position height="-1" width="-1" x="189" y="459"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="6" corner="BOTTOM_RIGHT" language="java" name="org.logchan.model.TableData" project="LogChan" 
+    file="/LogChan/src/org/logchan/model/TableData.java" binary="false">    
+    <position height="129" width="270" x="553" y="27"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <generalization id="7">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="2"/>  
+  </generalization>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true"/>    
+    <operations public="true" package="true" protected="true" private="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
