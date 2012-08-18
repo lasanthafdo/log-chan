@@ -55,7 +55,7 @@ public class TemplateViewer extends JDialog{
 			}
 			data.add(element);
 		}		
-		this.add(new Template(data,columnNames),constraints);
+		this.add(new ParseTable(data,columnNames),constraints);
 		constraints.gridwidth = 1;
 		constraints.gridy = 1;
 		constraints.weightx = 1;
@@ -92,14 +92,14 @@ public class TemplateViewer extends JDialog{
 	}
 	
 	
-	private class Template extends JTable{		
+	private class ParseTable extends JTable{		
 		
 	   /**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 
-	private Template(Vector<Vector<String>> data, Vector<String> columnNames){	   
+	private ParseTable(Vector<Vector<String>> data, Vector<String> columnNames){	   
 		   TableData model = new TableData(data,columnNames);
 		   this.setModel(model.getModel());
 	   }
