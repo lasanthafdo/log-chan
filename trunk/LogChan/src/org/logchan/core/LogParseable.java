@@ -31,4 +31,6 @@ public interface LogParseable {
 	 * 	A Map<String,String> that contains the meta data for the most recent parsing
 	 */
 	public Map<String, String> getMetaData();
+	
+	public void setMatchMode(int mode);
 }

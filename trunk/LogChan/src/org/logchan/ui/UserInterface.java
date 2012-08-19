@@ -109,13 +109,12 @@ public class UserInterface extends JFrame implements ActionListener {
 		constraints.insets = new Insets(0, 10, 0, 10);
 		this.add(getSplitPane(), constraints);
 
-
 		constraints.weightx = 0.1;
 		constraints.gridy = 2;
 		constraints.gridx = 1;
 		constraints.fill = GridBagConstraints.NONE;
 		this.add(getBottomButtons(), constraints);
-		
+
 	}
 
 	private MultiSplitPane getSplitPane() throws IOException {
@@ -125,7 +124,7 @@ public class UserInterface extends JFrame implements ActionListener {
 		JPanel topPanel = new JPanel(new GridBagLayout());
 		JLabel logInputLabel = new JLabel("Logs");
 		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.fill = GridBagConstraints.NONE;		
+		constraints.fill = GridBagConstraints.NONE;
 		constraints.anchor = GridBagConstraints.CENTER;
 		constraints.insets = new Insets(1, 0, 1, 0);
 		constraints.weightx = 0.1;
@@ -140,7 +139,7 @@ public class UserInterface extends JFrame implements ActionListener {
 		constraints.insets = new Insets(0, 0, 0, 0);
 		topPanel.add(topScrollPane, constraints);
 		splitPane.add(topPanel, "top");
-		
+
 		// Add label for mid pane
 		JPanel midPanel = new JPanel(new GridBagLayout());
 		JLabel midProperties = new JLabel("Template Details");
@@ -153,11 +152,11 @@ public class UserInterface extends JFrame implements ActionListener {
 		ScrollPane midScrollPane = new ScrollPane();
 		midScrollPane.add(getTemplateDetailsArea());
 		constraints.fill = GridBagConstraints.BOTH;
-		constraints.gridy = 1;		
+		constraints.gridy = 1;
 		constraints.insets = new Insets(0, 0, 0, 0);
 		midPanel.add(midScrollPane, constraints);
 		splitPane.add(midPanel, "middle");
-		
+
 		return splitPane;
 	}
 
@@ -187,10 +186,6 @@ public class UserInterface extends JFrame implements ActionListener {
 		constraints.fill = GridBagConstraints.NONE;
 		constraints.insets = new Insets(1, 0, 1, 0);
 		bottomPanel.add(bottomLabel, constraints);
-		
-		ScrollPane bottomScrollPane = new ScrollPane();
-		constraints.anchor = GridBagConstraints.NORTHWEST;
-		constraints.fill = GridBagConstraints.BOTH;
 
 		Vector<String> columnNames = new Vector<String>();
 		columnNames.add("Col 1");
@@ -210,8 +205,19 @@ public class UserInterface extends JFrame implements ActionListener {
 			}
 			data.add(element);
 		}
-		bottomScrollPane.add(new ParseTable(data, columnNames), constraints);
+		ParseTable table = new ParseTable(data, columnNames);
+		ScrollPane bottomScrollPane = new ScrollPane();
+		constraints.anchor = GridBagConstraints.NORTHWEST;
+		constraints.fill = GridBagConstraints.BOTH;
+		bottomScrollPane.add(table, constraints);
+
 		constraints.gridy = 1;
+		constraints.weighty = 0.1;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.insets = new Insets(0, 0, 0, 0);		
+		bottomPanel.add(table.getTableHeader(),constraints);
+		
+		constraints.gridy = 2;
 		constraints.weighty = 0.1;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.insets = new Insets(0, 0, 0, 0);
@@ -362,7 +368,7 @@ public class UserInterface extends JFrame implements ActionListener {
 			fileChooser.setFileFilter(new FileFilter() {
 				@Override
 				public String getDescription() {
-					return "*.log";
+					return "*.log or Any File";
 				}
 
 				@Override
@@ -385,7 +391,7 @@ public class UserInterface extends JFrame implements ActionListener {
 		constraints.insets = new Insets(2, 2, 2, 2);
 		panel.add(getOutputButton(), constraints);
 		constraints.anchor = GridBagConstraints.EAST;
-		constraints.insets = new Insets(2, 2, 2, 2);		
+		constraints.insets = new Insets(2, 2, 2, 2);
 		constraints.gridx = 1;
 		panel.add(getRecomendationsButton(), constraints);
 		return panel;
@@ -405,14 +411,11 @@ public class UserInterface extends JFrame implements ActionListener {
 		if (recomendationsButton == null) {
 			recomendationsButton = new JButton("View Recomendations");
 			recomendationsButton.setEnabled(false);
-			recomendationsButton.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-
-				}
-			});
+			recomendationsButton
+					.setActionCommand(ACTION_COMMAND_VIEW_RECOMENDATIONS);
+			recomendationsButton.addActionListener(this);
 		}
+
 		return recomendationsButton;
 	}
 
@@ -551,7 +554,7 @@ public class UserInterface extends JFrame implements ActionListener {
 		if (actionCommand.equals(ACTION_COMMAND_VIEW_OUTPUT)) {
 			new TemplateViewer(messages).setVisible(true);
 		} else if (actionCommand.equals(ACTION_COMMAND_VIEW_RECOMENDATIONS)) {
-			// TODO
+			new RecommendationViewer(null).setVisible(true);
 		} else if (actionCommand.equals("REFRESH")) {
 		} else if (actionCommand.equals("SAVE")) {
 

@@ -34,6 +34,7 @@ public class DefaultFlowController implements FlowControllable {
 		messages = null;
 		iStream = null;
 		if (filename != null) {
+			parser.setMatchMode(SystemConstants.MATCH_FROM_START);
 			iStream = logReader.getInputStream(filename);
 			messages = parser.parseLog(iStream);
 		}
