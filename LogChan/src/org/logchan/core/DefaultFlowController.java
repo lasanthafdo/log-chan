@@ -12,6 +12,7 @@ public class DefaultFlowController implements FlowControllable {
 	private final String header = "IP\t User\t Login\t Date-Time\t URL\t\t\t Response Code\t Bytes\t Referrer\t\t\t Client";
 	
 	private List<String[]> messages;
+	private Map<String, String> metaMap;
 	private LogParseable parser;
 	private LogReader logReader;
 	private InputStream iStream = null;
@@ -37,6 +38,9 @@ public class DefaultFlowController implements FlowControllable {
 			parser.setMatchMode(SystemConstants.MATCH_FROM_START);
 			iStream = logReader.getInputStream(filename);
 			messages = parser.parseLog(iStream);
+			
+			metaMap = parser.getMetaData();
+			metaMap.put(SystemConstants.LOG_FILENAME, filename);
 		}
 		
 		return messages;
