@@ -19,6 +19,11 @@ public class TableData {
 		System.out.println("Line Count: " + data.size());
 		System.out.println("No. of columns: " + columnNames.size());
 		return new DefaultTableModel(data, columnNames) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -7911761238075532719L;
+
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				// TODO Auto-generated method stub
