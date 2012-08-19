@@ -91,13 +91,13 @@ public class ApacheLogParser implements LogParseable {
 			}
 		}
 
-		metaData.put("Total Line Count", String.valueOf(totCount));
-		metaData.put("Total lines parsed", String.valueOf(matchCount));
-		metaData.put("Total bytes read", String.valueOf(totalBytes));
-		metaData.put("Average Bytes per line",
+		metaData.put(SystemConstants.TOT_LINE_COUNT, String.valueOf(totCount));
+		metaData.put(SystemConstants.TOT_LINE_PARSED, String.valueOf(matchCount));
+		metaData.put(SystemConstants.TOT_BYTES_READ, String.valueOf(totalBytes));
+		metaData.put(SystemConstants.AVG_BYTES_PER_LINE,
 				String.valueOf(totalBytes / totCount));
-		metaData.put("Minimum Columns", String.valueOf(groupCountMin));
-		metaData.put("Maximimum Columns", String.valueOf(groupCountMax));
+		metaData.put(SystemConstants.MAX_COL, String.valueOf(groupCountMin));
+		metaData.put(SystemConstants.MIN_COL, String.valueOf(groupCountMax));
 
 		return messages;
 	}
