@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.logchan.formats.HTTPDLogFormat;
+import org.logchan.model.DefaultModelHandler;
+import org.logchan.model.ModelHandleable;
+import org.logchan.rules.RuleManager;
+
 public class DefaultFlowController implements FlowControllable {
 
 	private static volatile DefaultFlowController instance = null;
@@ -16,6 +21,8 @@ public class DefaultFlowController implements FlowControllable {
 	private LogParseable parser;
 	private LogReader logReader;
 	private InputStream iStream = null;
+	private ModelHandleable modelHandler = null;
+	private RuleManager ruleManager;
 	
 	public static DefaultFlowController getInstance() {
 		if(instance == null) {
@@ -28,13 +35,18 @@ public class DefaultFlowController implements FlowControllable {
 	private DefaultFlowController() {
 		parser = new ApacheLogParser();
 		logReader = new LogReader();
+		metaMap = null;
+		messages = null;
+		modelHandler = new DefaultModelHandler();
+		ruleManager = new RuleManager();
 	}
 
 	@Override
-	public List<String[]> parseFile(String filename) throws IOException {
+	public List<String[]> parseFile(String filename, String formatPattern) throws IOException {
 		messages = null;
 		iStream = null;
 		if (filename != null) {
+			parser.setLogFormat(new HTTPDLogFormat(SystemConstants.HTTPD_NCSA, formatPattern));
 			parser.setMatchMode(SystemConstants.MATCH_FROM_START);
 			iStream = logReader.getInputStream(filename);
 			messages = parser.parseLog(iStream);
@@ -66,6 +78,15 @@ public class DefaultFlowController implements FlowControllable {
 			for(String key: keySet) {
 				System.out.println(key + ": " + metD.get(key));
 			}
+		}
+	}
+
+	@Override
+	public void processRules() {
+		if(metaMap != null) {
+			modelHandler.setMetaData(metaMap);
+			List<Object> inputList = modelHandler.getInputList();
+			List<Object> results = ruleManager.getRuleResults(inputList);
 		}
 	}
 }

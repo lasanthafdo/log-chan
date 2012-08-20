@@ -10,7 +10,7 @@ public interface FlowControllable {
 	 * @return
 	 * @throws IOException
 	 */
-	public List<String[]> parseFile(String filename) throws IOException;
+	public List<String[]> parseFile(String filename, String formatPattern) throws IOException;
 	
 	/**
 	 * Prints the output of the already parsed file.
@@ -21,4 +21,6 @@ public interface FlowControllable {
 	 * Prints the meta data, file characteristics of the log file parsed
 	 */
 	public void printMetaData();
+	
+	public void processRules();
 }

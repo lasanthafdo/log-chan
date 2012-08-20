@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -39,6 +40,7 @@ import org.logchan.core.ApacheLogParser;
 import org.logchan.core.DefaultFlowController;
 import org.logchan.core.FlowControllable;
 import org.logchan.core.LogReader;
+import org.logchan.core.StandardExpressions;
 import org.logchan.model.TableData;
 
 public class UserInterface extends JFrame implements ActionListener {
@@ -48,12 +50,13 @@ public class UserInterface extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1054889042259220064L;
 
 	private JEditorPane logFileContentArea;
-	private JEditorPane templateDetailsArea;
 	private JEditorPane parseOutputArea;
 	private JTextField sourceFilePathField;
+	private JTextField logPatternField;
 	private JButton saveButton;
 	private JFileChooser fileChooser;
-	private JButton outputButton;
+	private JButton addTemplateButton;
+	private JComboBox comboBox;
 	private JButton recomendationsButton;
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
@@ -142,24 +145,41 @@ public class UserInterface extends JFrame implements ActionListener {
 
 		// Add label for mid pane
 		JPanel midPanel = new JPanel(new GridBagLayout());
-		JLabel midProperties = new JLabel("Template Details");
+		JLabel midProperties = new JLabel("Log format(As Regex)");
 		constraints.fill = GridBagConstraints.NONE;
 		constraints.anchor = GridBagConstraints.CENTER;
 		constraints.insets = new Insets(1, 0, 1, 0);
 		constraints.gridy = 0;
 		midPanel.add(midProperties, constraints);
 		// Add mid scroll pane
-		ScrollPane midScrollPane = new ScrollPane();
-		midScrollPane.add(getTemplateDetailsArea());
+		logPatternField = new JTextField();
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.gridy = 1;
+		constraints.gridwidth = 2;
 		constraints.insets = new Insets(0, 0, 0, 0);
-		midPanel.add(midScrollPane, constraints);
+		midPanel.add(logPatternField, constraints);
+		constraints.gridwidth = 1;
+		constraints.fill = GridBagConstraints.NONE;
+		constraints.anchor = GridBagConstraints.EAST;
+		constraints.gridy = 2;
+		constraints.insets = new Insets(10, 10, 0, 0);
+		midPanel.add(getKnownStandardsCombo(), constraints);
+		constraints.gridy = 2;
+		constraints.anchor = GridBagConstraints.WEST;
+		constraints.insets = new Insets(10, 10, 0, 0);
+		midPanel.add(getAddRegexButton(), constraints);
 		splitPane.add(midPanel, "middle");
 
 		return splitPane;
 	}
 
+	private JComboBox getKnownStandardsCombo() {
+		if(comboBox == null) {
+			comboBox = new JComboBox(StandardExpressions.EXPRESSION_MAP.keySet().toArray());
+		}
+		return comboBox;
+	}
+	
 	private Split getMultiSplitLayout() {
 		Leaf topLeaf = new Leaf("top");
 		Leaf midLeaf = new Leaf("middle");
@@ -248,14 +268,6 @@ public class UserInterface extends JFrame implements ActionListener {
 		return logFileContentArea;
 	}
 
-	private JEditorPane getTemplateDetailsArea() throws IOException {
-		if (templateDetailsArea == null) {
-			templateDetailsArea = new JEditorPane();
-			templateDetailsArea.setEditable(false);
-		}
-		return templateDetailsArea;
-	}
-
 	private JEditorPane getParseOutputArea() throws IOException {
 		if (parseOutputArea == null) {
 			parseOutputArea = new JEditorPane();
@@ -307,14 +319,13 @@ public class UserInterface extends JFrame implements ActionListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						messages = flowController.parseFile(filename);
+						messages = flowController.parseFile(filename, logPatternField.getText());
 						flowController.printMetaData();
 						displayOutput();
-						getOutputButton().setEnabled(true);
 						getRecomendationsButton().setEnabled(true);
 					} catch (Exception ex) {
 						ex.printStackTrace();
-						getOutputButton().setEnabled(false);
+						getAddRegexButton().setEnabled(false);
 						getRecomendationsButton().setEnabled(false);
 					}
 				}
@@ -387,24 +398,28 @@ public class UserInterface extends JFrame implements ActionListener {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.anchor = GridBagConstraints.WEST;
-		constraints.insets = new Insets(2, 2, 2, 2);
-		panel.add(getOutputButton(), constraints);
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.insets = new Insets(2, 2, 2, 2);
-		constraints.gridx = 1;
 		panel.add(getRecomendationsButton(), constraints);
 		return panel;
 	}
 
-	private JButton getOutputButton() {
-		if (outputButton == null) {
-			outputButton = new JButton("View Parsed Output");
-			outputButton.setEnabled(false);
-			outputButton.setActionCommand(ACTION_COMMAND_VIEW_OUTPUT);
-			outputButton.addActionListener(this);
+	private JButton getAddRegexButton() {
+		if (addTemplateButton == null) {
+			addTemplateButton = new JButton("Add Format Regex");
+			addTemplateButton.setEnabled(true);
+			addTemplateButton.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					// TODO Auto-generated method stub
+					String regexPattern = StandardExpressions.EXPRESSION_MAP.get((String)comboBox.getSelectedItem());
+					logPatternField.setText(regexPattern);
+					splitPane.validate();
+				}
+			});
 		}
-		return outputButton;
+		return addTemplateButton;
 	}
 
 	private JButton getRecomendationsButton() {

@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.logchan.formats.LogFormattable;
+
 /**
  * All Parsers implement this interface to get access to different parsers
  * @author lasantha
@@ -32,5 +34,11 @@ public interface LogParseable {
 	 */
 	public Map<String, String> getMetaData();
 	
+	/**
+	 * 
+	 * @param mode
+	 */
 	public void setMatchMode(int mode);
+	
+	public void setLogFormat(LogFormattable format);
 }
