@@ -97,15 +97,16 @@ public class LogRuleEngine {
 		this.input = input;
 	}
 
-	public void processRulesFromResource(String resourceName) {
+	public List<Object> processRulesFromResource(String resourceName) {
 
+		List<Object> results = null;
 		try {
 			RuleExecutionSet res1 = getRulesFromFile(resourceName);
 			registerRuleExecutionSet(res1);
 
 			ruleRuntime = serviceProvider.getRuleRuntime();
 
-			List<Object> results = executeStatelessRules(res1);
+			results = executeStatelessRules(res1);
 			// Loop over the results.
 
 			Iterator<Object> itr = results.iterator();
@@ -131,49 +132,41 @@ public class LogRuleEngine {
 			}
 
 			// Create and execute a statefulRuleSession.
-			prepareTestInput();			
-			results = executeStatefulRuleSession(res1);
-			
-			itr = results.iterator();
-
-			while (itr.hasNext()) {
-
-				Object obj = itr.next();
-
-				if (obj instanceof Customer)
-
-					System.out.println("Customer credit limit result: " +
-
-					((Customer) obj).getCreditLimit());
-
-				if (obj instanceof Invoice)
-
-					System.out.println(((Invoice) obj).getDescription() +
-
-					" amount: " + ((Invoice) obj).getAmount() +
-
-					" status: " + ((Invoice) obj).getStatus());
-
-			}
-
+//			prepareTestInput();			
+//			results = executeStatefulRuleSession(res1);
+//			
+//			itr = results.iterator();
+//
+//			while (itr.hasNext()) {
+//
+//				Object obj = itr.next();
+//
+//				if (obj instanceof Customer)
+//
+//					System.out.println("Customer credit limit result: " +
+//
+//					((Customer) obj).getCreditLimit());
+//
+//				if (obj instanceof Invoice)
+//
+//					System.out.println(((Invoice) obj).getDescription() +
+//
+//					" amount: " + ((Invoice) obj).getAmount() +
+//
+//					" status: " + ((Invoice) obj).getStatus());
+//
+//			}
 		} catch (NoClassDefFoundError e) {
-
 			if (e.getMessage().indexOf("JessException") != -1) {
-
 				System.err.println("Error: The RI Jess could not be found.");
-
 			} else {
-
 				System.err.println("Error: " + e.getMessage());
-
 			}
-
 		} catch (Exception e) {
-
 			e.printStackTrace();
-
 		}
-
+		
+		return results;
 	}
 
 	public List<Object> executeStatelessRules(RuleExecutionSet res) {

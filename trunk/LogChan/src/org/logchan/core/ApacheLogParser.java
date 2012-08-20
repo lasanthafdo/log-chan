@@ -11,8 +11,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.logchan.formats.LogFormattable;
+
 public class ApacheLogParser implements LogParseable {
 
+	public static final int NUM_FIELDS = 9;	
 	// The pattern goes like match 'digits or signs class 1 or more|IP|','any
 	// non-whitespace characters|user?|',
 	// 'any non-whitespace|login?|','starts with [,then word chars,: and /
@@ -22,9 +25,7 @@ public class ApacheLogParser implements LogParseable {
 	// Code|','Any no. of digits |#Bytes|',
 	// 'Starts with " and has no " in middle and ends with " |Referrer|','Same
 	// previous pattern |Client|'
-	public static final String logEntryPattern = "^([\\d.:]+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(.+?)\" (\\d{3}) (\\d+|\\-) \"([^\"]+)\" \"([^\"]+)\"";
-	public static final int NUM_FIELDS = 9;
-
+	private String logEntryPattern = "^([\\d.:]+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(.+?)\" (\\d{3}) (\\d+|\\-) \"([^\"]+)\" \"([^\"]+)\"";
 	private Map<String, String> metaData;
 	private int matchMode;
 
@@ -100,5 +101,11 @@ public class ApacheLogParser implements LogParseable {
 		metaData.put(SystemConstants.MIN_COL, String.valueOf(groupCountMax));
 
 		return messages;
+	}
+
+	@Override
+	public void setLogFormat(LogFormattable format) {
+		// TODO Auto-generated method stub
+		this.logEntryPattern = format.getRegex();
 	}
 }

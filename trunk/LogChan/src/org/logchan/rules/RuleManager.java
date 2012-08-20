@@ -13,6 +13,12 @@ public class RuleManager {
 	public RuleManager() {
 		logRuleEngine = new LogRuleEngine();
 	}
+	
+	public List<Object> getRuleResults(List<Object> inputList) {
+		logRuleEngine.setInput(inputList);
+		return logRuleEngine.processRulesFromResource("/org/logchan/rules/size_rules.xml");
+	}
+	
 	public void invokeExample() {
 		// Then call executeRules on the input objects.
 
