@@ -40,7 +40,7 @@ import org.logchan.core.ApacheLogParser;
 import org.logchan.core.DefaultFlowController;
 import org.logchan.core.FlowControllable;
 import org.logchan.core.LogReader;
-import org.logchan.core.StandardExpressions;
+import org.logchan.core.SystemMappings;
 import org.logchan.model.TableData;
 
 public class UserInterface extends JFrame implements ActionListener {
@@ -175,7 +175,7 @@ public class UserInterface extends JFrame implements ActionListener {
 
 	private JComboBox getKnownStandardsCombo() {
 		if(comboBox == null) {
-			comboBox = new JComboBox(StandardExpressions.EXPRESSION_MAP.keySet().toArray());
+			comboBox = new JComboBox(SystemMappings.EXPRESSION_MAP.keySet().toArray());
 		}
 		return comboBox;
 	}
@@ -321,6 +321,8 @@ public class UserInterface extends JFrame implements ActionListener {
 					try {
 						messages = flowController.parseFile(filename, logPatternField.getText());
 						flowController.printMetaData();
+						flowController.processRules();
+						flowController.generateRecommendations();
 						displayOutput();
 						getRecomendationsButton().setEnabled(true);
 					} catch (Exception ex) {
@@ -413,7 +415,7 @@ public class UserInterface extends JFrame implements ActionListener {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					// TODO Auto-generated method stub
-					String regexPattern = StandardExpressions.EXPRESSION_MAP.get((String)comboBox.getSelectedItem());
+					String regexPattern = SystemMappings.EXPRESSION_MAP.get((String)comboBox.getSelectedItem());
 					logPatternField.setText(regexPattern);
 					splitPane.validate();
 				}

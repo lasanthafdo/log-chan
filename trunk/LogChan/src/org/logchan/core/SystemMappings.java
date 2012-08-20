@@ -3,7 +3,7 @@ package org.logchan.core;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StandardExpressions {
+public class SystemMappings {
 	public static final Map<String, String> EXPRESSION_MAP = new HashMap<String, String>() {
 		/**
 		 * 
@@ -15,4 +15,5 @@ public class StandardExpressions {
 		}
 	};
 	
+	public static final Integer SIZE_TO_LINES_RATIO_LARGE = 1;
 }

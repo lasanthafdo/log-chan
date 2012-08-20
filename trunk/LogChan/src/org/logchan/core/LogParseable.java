@@ -32,7 +32,7 @@ public interface LogParseable {
 	 * @return
 	 * 	A Map<String,String> that contains the meta data for the most recent parsing
 	 */
-	public Map<String, String> getMetaData();
+	public Map<String, Object> getMetaData();
 	
 	/**
 	 * 
