@@ -2,6 +2,7 @@ package org.logchan.core;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface FlowControllable {
 	/**
@@ -23,4 +24,8 @@ public interface FlowControllable {
 	public void printMetaData();
 	
 	public void processRules();
+	
+	public void generateRecommendations();
+	
+	public Map<String, Object> getOutputData();
 }

@@ -5,18 +5,16 @@ import java.util.Map;
 
 public class DefaultModelHandler implements ModelHandleable {
 
-	private Map<String, String> metaData = null;
-	private List<Object> inputList = null;
+	private Map<String, Object> metaData = null;
 	
 	@Override
-	public void setMetaData(Map<String, String> metaData) {
+	public void setMetaData(Map<String, Object> metaData) {
 		this.metaData = metaData;
 	}
 
 	@Override
-	public List<Object> getInputList() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Object> getInputList(LogModelable logModeler) {
+		return logModeler.getPopulatedModel(metaData);
 	}
 
 }

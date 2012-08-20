@@ -3,7 +3,6 @@ package org.logchan.reports;
 public class Recommendation {
 	private boolean statusOK = false;
 	private String recommendationMsg;
-	private int recommendationIndex;
 
 	public Recommendation(boolean statusOK, String msg) {
 		this.statusOK = statusOK;
@@ -24,14 +23,6 @@ public class Recommendation {
 
 	public void setRecommendationMsg(String recommendationMsg) {
 		this.recommendationMsg = recommendationMsg;
-	}
-
-	public int getRecommendationIndex() {
-		return recommendationIndex;
-	}
-
-	public void setRecommendationIndex(int recommendationIndex) {
-		this.recommendationIndex = recommendationIndex;
 	}
 
 }

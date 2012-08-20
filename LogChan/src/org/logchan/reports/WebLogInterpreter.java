@@ -1,6 +1,8 @@
 package org.logchan.reports;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,15 +25,24 @@ public class WebLogInterpreter implements ResultInterpretable {
 		webRecMap = new HashMap<Integer, Recommendation>();
 	}
 	
-	public void addRecommendation(Recommendation rec) {
-		webRecMap.put(1, new Recommendation(true, "The log file size is acceptable to with regard to line count"));
+	public void addRecommendation(Integer status, Recommendation rec) {
+		webRecMap.put(status,rec);
 	}
 	
 	@Override
 	public List<String> getInterpretedRecommendations(List<Object> results) {
 		// TODO Auto-generated method stub
+		List<String> msgList = new ArrayList<String>();
+		Iterator<Object> itr = results.iterator();
+		while(itr.hasNext()) {
+			msgList.add(interpretResult(itr.next()));
+		}
 		
-		return null;
+		return msgList;
+	}
+	
+	public void populateRecommendations() {
+		addRecommendation(1, new Recommendation(true, "The log file size is acceptable to with regard to line count"));		
 	}
 	
 	private String interpretResult(Object resultObj) {

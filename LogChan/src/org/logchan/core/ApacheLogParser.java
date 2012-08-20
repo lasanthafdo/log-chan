@@ -26,11 +26,11 @@ public class ApacheLogParser implements LogParseable {
 	// 'Starts with " and has no " in middle and ends with " |Referrer|','Same
 	// previous pattern |Client|'
 	private String logEntryPattern = "^([\\d.:]+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(.+?)\" (\\d{3}) (\\d+|\\-) \"([^\"]+)\" \"([^\"]+)\"";
-	private Map<String, String> metaData;
+	private Map<String, Object> metaData;
 	private int matchMode;
 
 	public ApacheLogParser() {
-		metaData = new HashMap<String, String>();
+		metaData = new HashMap<String, Object>();
 		matchMode = 0;
 	}
 
@@ -39,7 +39,7 @@ public class ApacheLogParser implements LogParseable {
 	}
 
 	@Override
-	public Map<String, String> getMetaData() {
+	public Map<String, Object> getMetaData() {
 		return metaData;
 	}
 
@@ -92,13 +92,13 @@ public class ApacheLogParser implements LogParseable {
 			}
 		}
 
-		metaData.put(SystemConstants.TOT_LINE_COUNT, String.valueOf(totCount));
-		metaData.put(SystemConstants.TOT_LINE_PARSED, String.valueOf(matchCount));
-		metaData.put(SystemConstants.TOT_BYTES_READ, String.valueOf(totalBytes));
+		metaData.put(SystemConstants.TOT_LINE_COUNT, new Integer(totCount));
+		metaData.put(SystemConstants.TOT_LINE_PARSED, new Integer(matchCount));
+		metaData.put(SystemConstants.TOT_BYTES_READ, new Integer(totalBytes));
 		metaData.put(SystemConstants.AVG_BYTES_PER_LINE,
-				String.valueOf(totalBytes / totCount));
-		metaData.put(SystemConstants.MAX_COL, String.valueOf(groupCountMin));
-		metaData.put(SystemConstants.MIN_COL, String.valueOf(groupCountMax));
+				new Double(totalBytes / (double)totCount));
+		metaData.put(SystemConstants.MAX_COL, new Integer(groupCountMin));
+		metaData.put(SystemConstants.MIN_COL, new Integer(groupCountMax));
 
 		return messages;
 	}

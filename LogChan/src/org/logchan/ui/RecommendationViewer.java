@@ -17,11 +17,10 @@ public class RecommendationViewer extends JDialog {
 	
 	private JButton export;
 	private JButton close;
-	private Map<String, String> recommendationMap;
+	private Map<String, Object> dataMap;
 
-	public RecommendationViewer(Map<String, String> recMap) {
-		// TODO Auto-generated constructor stub
-		this.recommendationMap = recMap;
+	public RecommendationViewer(Map<String, Object> recMap) {
+		this.dataMap = recMap;
 		initialize();
 	}
 		
