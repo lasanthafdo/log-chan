@@ -8,14 +8,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.logchan.formats.LogFormattable;
+import org.logchan.model.DataType;
+import org.logchan.util.ConvertUtil;
 
 public class ApacheLogParser implements LogParseable {
 
-	public static final int NUM_FIELDS = 9;	
+	public static final int NUM_FIELDS = 9;
 	// The pattern goes like match 'digits or signs class 1 or more|IP|','any
 	// non-whitespace characters|user?|',
 	// 'any non-whitespace|login?|','starts with [,then word chars,: and /
@@ -46,7 +49,7 @@ public class ApacheLogParser implements LogParseable {
 	public List<String[]> parseLog(InputStream is) throws IOException {
 		List<String[]> messages = null;
 		int totCount = 0, matchCount = 0, totalBytes = 0;
-		int groupCountMax = 0; 
+		int groupCountMax = 0;
 		int groupCountMin = NUM_FIELDS;
 
 		if (is != null) {
@@ -80,23 +83,29 @@ public class ApacheLogParser implements LogParseable {
 					matcher = p.matcher(line);
 					if (matcher.lookingAt() && matcher.groupCount() >= 2) {
 						matchCount++;
-						if(matcher.groupCount() > groupCountMax) {groupCountMax = matcher.groupCount();}
-						if(matcher.groupCount() < groupCountMin) {groupCountMin = matcher.groupCount();}
+						if (matcher.groupCount() > groupCountMax) {
+							groupCountMax = matcher.groupCount();
+						}
+						if (matcher.groupCount() < groupCountMin) {
+							groupCountMin = matcher.groupCount();
+						}
 						String[] matchArray = new String[matcher.groupCount()];
-						for(int i =0; i < matcher.groupCount(); i++) {
-							matchArray[i] = matcher.group(i+1);
+						for (int i = 0; i < matcher.groupCount(); i++) {
+							matchArray[i] = matcher.group(i + 1);
 						}
 						messages.add(matchArray);
 					}
 				}
 			}
+
+			reader.close();
 		}
 
 		metaData.put(SystemConstants.TOT_LINE_COUNT, new Integer(totCount));
 		metaData.put(SystemConstants.TOT_LINE_PARSED, new Integer(matchCount));
 		metaData.put(SystemConstants.TOT_BYTES_READ, new Integer(totalBytes));
-		metaData.put(SystemConstants.AVG_BYTES_PER_LINE,
-				new Double(totalBytes / (double)totCount));
+		metaData.put(SystemConstants.AVG_BYTES_PER_LINE, new Double(totalBytes
+				/ (double) totCount));
 		metaData.put(SystemConstants.MAX_COL, new Integer(groupCountMin));
 		metaData.put(SystemConstants.MIN_COL, new Integer(groupCountMax));
 
@@ -107,5 +116,38 @@ public class ApacheLogParser implements LogParseable {
 	public void setLogFormat(LogFormattable format) {
 		// TODO Auto-generated method stub
 		this.logEntryPattern = format.getRegex();
+	}
+
+	@Override
+	public Vector<Class<?>> deriveColumnTypes(InputStream is) {
+		Vector<Class<?>> columnTypes = new Vector<Class<?>>();
+		Vector<Class<?>> oldColumnTypes = null;
+		if (is != null) {
+			BufferedReader reader = new BufferedReader(
+					new InputStreamReader(is));
+			String line = null;
+			try {
+				while ((line = reader.readLine()) != null) {
+					oldColumnTypes = (Vector<Class<?>>) columnTypes.clone();
+					columnTypes.clear();
+					Pattern p = Pattern.compile(logEntryPattern);
+					Matcher matcher = p.matcher(line);
+					if (matcher.lookingAt()) {
+						for (int i = 1; i <= matcher.groupCount(); i++) {
+							columnTypes.add(ConvertUtil
+									.getDataType(matcher.group(i)));
+						}
+					}
+					if (oldColumnTypes.equals(columnTypes))
+						break;
+				}
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+
+		return columnTypes;
 	}
 }

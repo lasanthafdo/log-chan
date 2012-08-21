@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -40,6 +41,7 @@ import org.logchan.core.ApacheLogParser;
 import org.logchan.core.DefaultFlowController;
 import org.logchan.core.FlowControllable;
 import org.logchan.core.LogReader;
+import org.logchan.core.SystemConstants;
 import org.logchan.core.SystemMappings;
 import org.logchan.model.TableData;
 
@@ -53,10 +55,11 @@ public class UserInterface extends JFrame implements ActionListener {
 	private JEditorPane parseOutputArea;
 	private JTextField sourceFilePathField;
 	private JTextField logPatternField;
-	private JButton saveButton;
-	private JFileChooser fileChooser;
-	private JButton addTemplateButton;
 	private JComboBox comboBox;
+	private JFileChooser fileChooser;
+	private JButton runButton;
+	private JButton clearButton;
+	private JButton addTemplateButton;
 	private JButton recomendationsButton;
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
@@ -86,6 +89,7 @@ public class UserInterface extends JFrame implements ActionListener {
 
 	// TODO i18n
 	private void initializeUi() throws Exception {
+		this.setTitle("Log-Chan - Log Analysis Recommendations");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new GridBagLayout());
 		this.setSize(1000, 600);
@@ -196,7 +200,7 @@ public class UserInterface extends JFrame implements ActionListener {
 		return root;
 	}
 
-	private void displayOutput() {
+	private void displayOutput(Vector<Class<?>> columnTypes) {
 		JPanel bottomPanel = new JPanel(new GridBagLayout());
 		JLabel bottomLabel = new JLabel("Parsed Output");
 		GridBagConstraints constraints = new GridBagConstraints();
@@ -208,15 +212,9 @@ public class UserInterface extends JFrame implements ActionListener {
 		bottomPanel.add(bottomLabel, constraints);
 
 		Vector<String> columnNames = new Vector<String>();
-		columnNames.add("Col 1");
-		columnNames.add("Col 2");
-		columnNames.add("Col 3");
-		columnNames.add("Col 4");
-		columnNames.add("Col 5");
-		columnNames.add("Col 6");
-		columnNames.add("Col 7");
-		columnNames.add("Col 8");
-		columnNames.add("Col 9");
+		for(Class<?> type: columnTypes)
+			columnNames.add(type.getSimpleName());
+		
 		Vector<Vector<String>> data = new Vector<Vector<String>>();
 		for (String[] message : messages) {
 			Vector<String> element = new Vector<String>();
@@ -305,25 +303,29 @@ public class UserInterface extends JFrame implements ActionListener {
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.WEST;
-		constraints.insets = new Insets(15, 5, 5, 5);
-		panel.add(getRunButton());
+		constraints.insets = new Insets(0, 5, 0, 5);
+		panel.add(getRunButton(), constraints);
+		constraints.gridx = 1;
+		panel.add(getClearButton(), constraints);		
 		return panel;
 	}
 
 	private JButton getRunButton() throws IOException {
-		if (saveButton == null) {
-			saveButton = new JButton("Process");
-			saveButton.setToolTipText("Run and process selected log");
-			saveButton.addActionListener(new ActionListener() {
+		if (runButton == null) {
+			runButton = new JButton("Process");
+			runButton.setToolTipText("Run and process selected log");
+			runButton.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					Map<String, Object> metaMap;
 					try {
 						messages = flowController.parseFile(filename, logPatternField.getText());
 						flowController.printMetaData();
 						flowController.processRules();
 						flowController.generateRecommendations();
-						displayOutput();
+						metaMap = flowController.getOutputData();
+						displayOutput((Vector<Class<?>>) metaMap.get(SystemConstants.COL_DATA_TYPES));
 						getRecomendationsButton().setEnabled(true);
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -334,9 +336,34 @@ public class UserInterface extends JFrame implements ActionListener {
 			});
 
 		}
-		return saveButton;
+		return runButton;
 	}
 
+	private JButton getClearButton() throws IOException {
+		if (clearButton == null) {
+			clearButton = new JButton("Clear");
+			clearButton.setToolTipText("Clear the current data");
+			clearButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					try {
+						getLogFileContentArea().setText("");
+						splitPane.list();
+						splitPane.remove(2);
+						splitPane.validate();
+						getSourceFilePathField().setText("");
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+
+		}
+		return clearButton;
+	}
+	
 	private JButton getSourceFileBrowseButton() {
 		JButton browser = new JButton("Browse");
 		browser.addActionListener(new ActionListener() {

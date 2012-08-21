@@ -16,7 +16,7 @@
 				(standardLogRate ?rate&amp;:(&gt; ?count ?rate))
 				(OBJECT ?A))
 			=&gt;
-			(modify ?weblog (logSizeStatus -1))
+			(modify ?weblog (logSizeStatus 1))
 			(printout t "The status of log file size is "
 				(get ?W logSizeStatus) crlf)
 		)
