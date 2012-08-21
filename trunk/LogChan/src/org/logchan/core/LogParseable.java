@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import org.logchan.formats.LogFormattable;
 
@@ -41,4 +42,6 @@ public interface LogParseable {
 	public void setMatchMode(int mode);
 	
 	public void setLogFormat(LogFormattable format);
+	
+	public Vector<Class<?>> deriveColumnTypes(InputStream is);
 }

@@ -13,6 +13,7 @@ public class SystemConstants {
 	public static final String MIN_COL = "Minimum Columns";	
 	public static final String LOG_FILENAME = "Filename";
 	public static final String REC_LIST = "Recommendations List";
+	public static final String COL_DATA_TYPES = "Column Data Types";
 	
 	public static final int HTTPD_NCSA = 1;
 

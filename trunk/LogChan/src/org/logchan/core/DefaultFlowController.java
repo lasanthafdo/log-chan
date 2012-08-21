@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import org.logchan.formats.HTTPDLogFormat;
 import org.logchan.model.DefaultModelHandler;
@@ -50,6 +51,7 @@ public class DefaultFlowController implements FlowControllable {
 	@Override
 	public List<String[]> parseFile(String filename, String formatPattern)
 			throws IOException {
+		Vector<Class<?>> columnTypes = null;
 		messages = null;
 		iStream = null;
 		if (filename != null) {
@@ -58,9 +60,11 @@ public class DefaultFlowController implements FlowControllable {
 			parser.setMatchMode(SystemConstants.MATCH_FROM_START);
 			iStream = logReader.getInputStream(filename);
 			messages = parser.parseLog(iStream);
+			columnTypes = parser.deriveColumnTypes(logReader.getInputStream(filename));			
 
 			metaMap = parser.getMetaData();
 			metaMap.put(SystemConstants.LOG_FILENAME, filename);
+			metaMap.put(SystemConstants.COL_DATA_TYPES, columnTypes);
 		}
 
 		return messages;
