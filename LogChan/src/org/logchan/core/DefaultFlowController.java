@@ -14,6 +14,8 @@ import org.logchan.model.ModelHandleable;
 import org.logchan.reports.ResultInterpretable;
 import org.logchan.reports.WebLogInterpreter;
 import org.logchan.rules.RuleManager;
+import org.logchan.util.DataMarshallable;
+import org.logchan.util.HTTPDMarshaller;
 
 public class DefaultFlowController implements FlowControllable {
 
@@ -29,6 +31,7 @@ public class DefaultFlowController implements FlowControllable {
 	private ModelHandleable modelHandler = null;
 	private RuleManager ruleManager;
 	private ResultInterpretable resultInterpreter = null;
+	private DataMarshallable dataMarshaller = null;
 
 	public static DefaultFlowController getInstance() {
 		if (instance == null) {
@@ -46,6 +49,7 @@ public class DefaultFlowController implements FlowControllable {
 		modelHandler = new DefaultModelHandler();
 		ruleManager = new RuleManager();
 		resultInterpreter = WebLogInterpreter.getInstance();
+		dataMarshaller = new HTTPDMarshaller();
 	}
 
 	@Override
@@ -115,5 +119,14 @@ public class DefaultFlowController implements FlowControllable {
 	@Override
 	public Map<String, Object> getOutputData() {
 		return metaMap;
+	}
+	
+	@Override
+	public Map<String, Integer> getTimeMarshalledData(List<String[]> messages, Map<String, Object> metaMap) {
+		if(dataMarshaller != null) {
+			return dataMarshaller.getDataSet(messages, metaMap);
+		}
+		
+		return null;
 	}
 }

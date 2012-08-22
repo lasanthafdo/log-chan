@@ -8,5 +8,11 @@
 	<classpathentry kind="lib" path="lib/jsr94-ri.jar"/>
 	<classpathentry kind="lib" path="lib/jsr94-tck.jar"/>
 	<classpathentry kind="lib" path="lib/xerces.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.17.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.14.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/C:/Users/lasantha/workspace/JFreeChart/doc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

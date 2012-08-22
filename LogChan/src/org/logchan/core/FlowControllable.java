@@ -28,4 +28,6 @@ public interface FlowControllable {
 	public void generateRecommendations();
 	
 	public Map<String, Object> getOutputData();
+	
+	public Map<String, Integer> getTimeMarshalledData(List<String[]> messages, Map<String, Object> metaMap);	
 }
