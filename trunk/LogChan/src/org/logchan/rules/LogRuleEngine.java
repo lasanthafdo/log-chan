@@ -61,7 +61,7 @@ public class LogRuleEngine {
 		}
 	}
 
-	public RuleExecutionSet getRulesFromFile(String resourceName) {
+	private RuleExecutionSet getRulesFromFile(String resourceName) {
 		RuleExecutionSet res = null;
 		try {
 			InputStream inStream = RuleManager.class
@@ -80,7 +80,7 @@ public class LogRuleEngine {
 		return res;
 	}
 
-	public void registerRuleExecutionSet(RuleExecutionSet res) {
+	private void registerRuleExecutionSet(RuleExecutionSet res) {
 		try {
 			String uri = res.getName();
 			ruleAdministrator.registerRuleExecutionSet(uri, res, null);

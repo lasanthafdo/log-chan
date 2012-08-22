@@ -22,7 +22,6 @@ public class LogReader {
 		return fileName;
 	}
 
-	@Deprecated
 	public String readFile(String fileName) throws IOException {
 		StringBuilder content = new StringBuilder("\n");
 		if (fileName != null && new File(fileName).exists()
