@@ -1,7 +1,5 @@
 package org.logchan.ui;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -24,12 +22,10 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JToolBar.Separator;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileFilter;
 
 import org.jdesktop.swingx.MultiSplitLayout.Divider;
@@ -51,6 +47,7 @@ public class UserInterface extends JFrame implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1054889042259220064L;
 
+	private RecommendationViewer recommendationViewer;
 	private JEditorPane logFileContentArea;
 	private JEditorPane parseOutputArea;
 	private JTextField sourceFilePathField;
@@ -96,27 +93,20 @@ public class UserInterface extends JFrame implements ActionListener {
 		this.setJMenuBar(getLogJMenuBar());
 		GridBagConstraints constraints = new GridBagConstraints();
 
+		constraints.gridwidth = 2;
 		constraints.weightx = 0.9;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.insets = new Insets(2, 5, 2, 2);
 		this.add(getFileBrowsePanel(), constraints);
 
-		constraints.weightx = 0.9;
-		constraints.gridx = 1;
-		constraints.insets = new Insets(12, 2, 2, 2);
-		constraints.anchor = GridBagConstraints.WEST;
-		constraints.fill = GridBagConstraints.NONE;
-		this.add(getRunButtonPanel(), constraints);
-
-		constraints.gridx = 0;
 		constraints.gridy = 1;
 		constraints.weighty = 0.1;
-		constraints.gridwidth = 2;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.insets = new Insets(0, 10, 0, 10);
 		this.add(getSplitPane(), constraints);
 
 		constraints.weightx = 0.1;
+		constraints.gridwidth = 1;
 		constraints.gridy = 2;
 		constraints.gridx = 1;
 		constraints.fill = GridBagConstraints.NONE;
@@ -159,7 +149,7 @@ public class UserInterface extends JFrame implements ActionListener {
 		logPatternField = new JTextField();
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.gridy = 1;
-		constraints.gridwidth = 2;
+		constraints.gridwidth = 3;
 		constraints.insets = new Insets(0, 0, 0, 0);
 		midPanel.add(logPatternField, constraints);
 		constraints.gridwidth = 1;
@@ -172,18 +162,24 @@ public class UserInterface extends JFrame implements ActionListener {
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.insets = new Insets(10, 10, 0, 0);
 		midPanel.add(getAddRegexButton(), constraints);
+		constraints.gridy = 2;
+		constraints.insets = new Insets(10, 10, 0, 0);
+		constraints.anchor = GridBagConstraints.WEST;
+		midPanel.add(getRunButton(), constraints);
+
 		splitPane.add(midPanel, "middle");
 
 		return splitPane;
 	}
 
 	private JComboBox getKnownStandardsCombo() {
-		if(comboBox == null) {
-			comboBox = new JComboBox(SystemMappings.EXPRESSION_MAP.keySet().toArray());
+		if (comboBox == null) {
+			comboBox = new JComboBox(SystemMappings.EXPRESSION_MAP.keySet()
+					.toArray());
 		}
 		return comboBox;
 	}
-	
+
 	private Split getMultiSplitLayout() {
 		Leaf topLeaf = new Leaf("top");
 		Leaf midLeaf = new Leaf("middle");
@@ -212,9 +208,9 @@ public class UserInterface extends JFrame implements ActionListener {
 		bottomPanel.add(bottomLabel, constraints);
 
 		Vector<String> columnNames = new Vector<String>();
-		for(Class<?> type: columnTypes)
+		for (Class<?> type : columnTypes)
 			columnNames.add(type.getSimpleName());
-		
+
 		Vector<Vector<String>> data = new Vector<Vector<String>>();
 		for (String[] message : messages) {
 			Vector<String> element = new Vector<String>();
@@ -232,9 +228,9 @@ public class UserInterface extends JFrame implements ActionListener {
 		constraints.gridy = 1;
 		constraints.weighty = 0.1;
 		constraints.fill = GridBagConstraints.BOTH;
-		constraints.insets = new Insets(0, 0, 0, 0);		
-		bottomPanel.add(table.getTableHeader(),constraints);
-		
+		constraints.insets = new Insets(0, 0, 0, 0);
+		bottomPanel.add(table.getTableHeader(), constraints);
+
 		constraints.gridy = 2;
 		constraints.weighty = 0.1;
 		constraints.fill = GridBagConstraints.BOTH;
@@ -288,25 +284,7 @@ public class UserInterface extends JFrame implements ActionListener {
 		constraints.gridx = 2;
 		constraints.fill = GridBagConstraints.NONE;
 		panel.add(getSourceFileBrowseButton(), constraints);
-		Separator leftSeparator = new Separator(new Dimension(new Dimension(2,
-				25)));
-		leftSeparator.setBorder(new CompoundBorder(new EtchedBorder(
-				EtchedBorder.LOWERED, new Color(149, 165, 159), null),
-				new EtchedBorder(EtchedBorder.LOWERED,
-						new Color(149, 165, 159), null)));
-		constraints.gridx = 3;
-		panel.add(leftSeparator, constraints);
-		return panel;
-	}
 
-	private JPanel getRunButtonPanel() throws IOException {
-		JPanel panel = new JPanel(new GridBagLayout());
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.anchor = GridBagConstraints.WEST;
-		constraints.insets = new Insets(0, 5, 0, 5);
-		panel.add(getRunButton(), constraints);
-		constraints.gridx = 1;
-		panel.add(getClearButton(), constraints);		
 		return panel;
 	}
 
@@ -320,13 +298,33 @@ public class UserInterface extends JFrame implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
 					Map<String, Object> metaMap;
 					try {
-						messages = flowController.parseFile(filename, logPatternField.getText());
-						flowController.printMetaData();
-						flowController.processRules();
-						flowController.generateRecommendations();
-						metaMap = flowController.getOutputData();
-						displayOutput((Vector<Class<?>>) metaMap.get(SystemConstants.COL_DATA_TYPES));
-						getRecomendationsButton().setEnabled(true);
+						if (!logPatternField.getText().isEmpty()) {
+							messages = flowController.parseFile(filename,
+									logPatternField.getText());
+							if (!messages.isEmpty()) {
+								flowController.printMetaData();
+								flowController.processRules();
+								flowController.generateRecommendations();
+								metaMap = flowController.getOutputData();
+								displayOutput((Vector<Class<?>>) metaMap
+										.get(SystemConstants.COL_DATA_TYPES));
+								recommendationViewer = new RecommendationViewer(
+										metaMap);
+								recommendationViewer.populateRecommendations();
+								getRecomendationsButton().setEnabled(true);
+								getClearButton().setEnabled(true);
+							} else {
+								JOptionPane.showMessageDialog(
+										UserInterface.this,
+										"Error in parsing log file",
+										"Log-Chan", JOptionPane.ERROR_MESSAGE);
+							}
+						} else {
+							JOptionPane.showMessageDialog(
+									UserInterface.this,
+									"Please select log format",
+									"Log-Chan", JOptionPane.INFORMATION_MESSAGE);
+						}
 					} catch (Exception ex) {
 						ex.printStackTrace();
 						getAddRegexButton().setEnabled(false);
@@ -339,20 +337,21 @@ public class UserInterface extends JFrame implements ActionListener {
 		return runButton;
 	}
 
-	private JButton getClearButton() throws IOException {
+	private JButton getClearButton() {
 		if (clearButton == null) {
 			clearButton = new JButton("Clear");
 			clearButton.setToolTipText("Clear the current data");
+			clearButton.setEnabled(false);
 			clearButton.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
+						clearOutput();
 						getLogFileContentArea().setText("");
-						splitPane.list();
-						splitPane.remove(2);
-						splitPane.validate();
 						getSourceFilePathField().setText("");
+						getRecomendationsButton().setEnabled(false);
+						getClearButton().setEnabled(false);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -363,7 +362,21 @@ public class UserInterface extends JFrame implements ActionListener {
 		}
 		return clearButton;
 	}
-	
+
+	private void clearOutput() {
+		int compIndex = 2;
+		if (splitPane.getComponent(compIndex) instanceof JPanel
+				&& (((JPanel) splitPane.getComponent(compIndex))
+						.getComponent(0) instanceof JLabel)) {
+			JLabel panelLabel = (JLabel) ((JPanel) splitPane
+					.getComponent(compIndex)).getComponent(0);
+			if (panelLabel.getText().equals("Parsed Output")) {
+				splitPane.remove(compIndex);
+			}
+		}
+		splitPane.validate();
+	}
+
 	private JButton getSourceFileBrowseButton() {
 		JButton browser = new JButton("Browse");
 		browser.addActionListener(new ActionListener() {
@@ -430,6 +443,8 @@ public class UserInterface extends JFrame implements ActionListener {
 		constraints.anchor = GridBagConstraints.EAST;
 		constraints.insets = new Insets(2, 2, 2, 2);
 		panel.add(getRecomendationsButton(), constraints);
+		constraints.gridx = 1;
+		panel.add(getClearButton(), constraints);
 		return panel;
 	}
 
@@ -438,11 +453,12 @@ public class UserInterface extends JFrame implements ActionListener {
 			addTemplateButton = new JButton("Add Format Regex");
 			addTemplateButton.setEnabled(true);
 			addTemplateButton.addActionListener(new ActionListener() {
-				
+
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					// TODO Auto-generated method stub
-					String regexPattern = SystemMappings.EXPRESSION_MAP.get((String)comboBox.getSelectedItem());
+					String regexPattern = SystemMappings.EXPRESSION_MAP
+							.get((String) comboBox.getSelectedItem());
 					logPatternField.setText(regexPattern);
 					splitPane.validate();
 				}
@@ -598,15 +614,10 @@ public class UserInterface extends JFrame implements ActionListener {
 		if (actionCommand.equals(ACTION_COMMAND_VIEW_OUTPUT)) {
 			new TemplateViewer(messages).setVisible(true);
 		} else if (actionCommand.equals(ACTION_COMMAND_VIEW_RECOMENDATIONS)) {
-			new RecommendationViewer(null).setVisible(true);
+			if (recommendationViewer != null)
+				recommendationViewer.setVisible(true);
 		} else if (actionCommand.equals("REFRESH")) {
 		} else if (actionCommand.equals("SAVE")) {
-
-			try {
-
-			} catch (Exception e1) {
-
-			}
 		} else if (actionCommand.equals("VIEW_ABOUT")) {
 		} else if (actionCommand.equals("EXIT")) {
 		} else if (actionCommand.equals("HELP")) {
