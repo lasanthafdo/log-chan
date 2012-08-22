@@ -33,6 +33,7 @@ import org.jdesktop.swingx.MultiSplitLayout.Leaf;
 import org.jdesktop.swingx.MultiSplitLayout.Node;
 import org.jdesktop.swingx.MultiSplitLayout.Split;
 import org.jdesktop.swingx.MultiSplitPane;
+import org.jfree.chart.JFreeChart;
 import org.logchan.core.ApacheLogParser;
 import org.logchan.core.DefaultFlowController;
 import org.logchan.core.FlowControllable;
@@ -40,6 +41,7 @@ import org.logchan.core.LogReader;
 import org.logchan.core.SystemConstants;
 import org.logchan.core.SystemMappings;
 import org.logchan.model.TableData;
+import org.logchan.reports.LogChart;
 
 public class UserInterface extends JFrame implements ActionListener {
 	/**
@@ -311,6 +313,8 @@ public class UserInterface extends JFrame implements ActionListener {
 								recommendationViewer = new RecommendationViewer(
 										metaMap);
 								recommendationViewer.populateRecommendations();
+								JFreeChart timeChart = new LogChart().createChart(flowController.getTimeMarshalledData(messages, metaMap));
+								recommendationViewer.addChart(timeChart);
 								getRecomendationsButton().setEnabled(true);
 								getClearButton().setEnabled(true);
 							} else {

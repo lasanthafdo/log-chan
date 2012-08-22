@@ -21,6 +21,7 @@ public class ConvertUtil {
 		primitiveMap.put(SupportedTypes.T_LONG, Long.class);
 		primitiveMap.put(SupportedTypes.T_FLOAT, Float.class);
 		primitiveMap.put(SupportedTypes.T_DOUBLE, Double.class);
+		primitiveMap.put(SupportedTypes.TC_JAVA_DATE, DateConverter.class);
 	}
 
 	/**
@@ -37,7 +38,8 @@ public class ConvertUtil {
 			Method m = destClass.getMethod("valueOf", String.class);
 			int mods = m.getModifiers();
 			if (Modifier.isStatic(mods) && Modifier.isPublic(mods)) {
-				return new DataType(destClass, m.invoke(null, value));
+				Object retObj = m.invoke(null, value);
+				return new DataType(retObj.getClass(), retObj);
 			}
 		} catch (NoSuchMethodException e) {
 			if (destClass == Character.class && value.length() == 1)

@@ -9,5 +9,6 @@ public class SupportedTypes {
 	public static final String T_FLOAT = "Float";
 	public static final String T_DOUBLE = "Double";
 	public static final String T_CHAR = "Character";
-	public static final String T_STRING = "String";	
+	public static final String T_STRING = "String";
+	public static final String TC_JAVA_DATE = "Date";
 }
