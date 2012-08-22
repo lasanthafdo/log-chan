@@ -36,12 +36,27 @@ public interface LogParseable {
 	public Map<String, Object> getMetaData();
 	
 	/**
-	 * 
+	 * Sets the match mode or the parsing mode to a strict matching or linear matching.
+	 * Available modes are {@link SystemConstants.MATCH_ENTIRE_REGION},{@link SystemConstants.MATCH_FROM_START}
+	 * and {@link SystemConstants.MATCH_TO_FIND} from most strict to the least strict
 	 * @param mode
+	 * 	the mode to parse the log file
 	 */
 	public void setMatchMode(int mode);
 	
+	/**
+	 * Sets the log format for parsing.
+	 * @param format
+	 * 	The format for parsing. Must implement {@code LogFormattable}
+	 */
 	public void setLogFormat(LogFormattable format);
 	
+	/**
+	 * Derives the column types of the log file and returns a vector.
+	 * @param is
+	 * 	the input stream of the log file
+	 * @return
+	 * 	a vector containing the identified column types.
+	 */
 	public Vector<Class<?>> deriveColumnTypes(InputStream is);
 }

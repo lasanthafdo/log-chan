@@ -13,7 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.logchan.formats.LogFormattable;
-import org.logchan.model.DataType;
 import org.logchan.util.ConvertUtil;
 
 public class ApacheLogParser implements LogParseable {
@@ -118,6 +117,7 @@ public class ApacheLogParser implements LogParseable {
 		this.logEntryPattern = format.getRegex();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Class<?>> deriveColumnTypes(InputStream is) {
 		Vector<Class<?>> columnTypes = new Vector<Class<?>>();
