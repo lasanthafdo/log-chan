@@ -51,7 +51,7 @@ public class ConvertUtil {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			// Not intended target. Do nothing. But......
-			// Boolean and char has to be handled specially
+			// Boolean has to be handled specially
 			if (value.equalsIgnoreCase("true")
 					|| value.equalsIgnoreCase("false"))
 				return new DataType(Boolean.class, Boolean.valueOf(value));

@@ -60,8 +60,6 @@ public class HTTPDMarshaller implements DataMarshallable {
 			e.printStackTrace();
 		}
 
-		System.out.println("Data Map: " + dataMap);
-		
 		return dataMap;
 	}
 
