@@ -296,6 +296,7 @@ public class UserInterface extends JFrame implements ActionListener {
 			runButton.setToolTipText("Run and process selected log");
 			runButton.addActionListener(new ActionListener() {
 
+				@SuppressWarnings("unchecked")
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					Map<String, Object> metaMap;

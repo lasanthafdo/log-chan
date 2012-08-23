@@ -14,5 +14,6 @@
 			<attribute name="javadoc_location" value="file:/C:/Users/lasantha/workspace/JFreeChart/doc/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
