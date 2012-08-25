@@ -70,15 +70,14 @@ public class RecommendationViewer extends JDialog {
 		this.validate();
 	}
 
-	public void addChart(JFreeChart chart) {
-		ChartPanel cp = new ChartPanel(chart);
+	public void addChart(ChartPanel chartPanel) {
 		JPanel chartJP = new JPanel(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.insets = new Insets(5, 5, 5, 5);		
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 0.5;
 		constraints.weighty = 0.5;
-		chartJP.add(cp, constraints);
+		chartJP.add(chartPanel, constraints);
 		chartJP.validate();
 		constraints.gridy = 0;
 		constraints.gridx = 2;
