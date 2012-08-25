@@ -1,8 +1,8 @@
 <class-diagram version="1.0.9" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" corner="BOTTOM_RIGHT" language="java" name="org.logchan.core.LogChanApp" project="LogChan" 
-    file="/LogChan/src/org/logchan/core/LogChanApp.java" binary="false">    
-    <position height="-1" width="-1" x="423" y="265"/>    
+  <class id="1" corner="BOTTOM_RIGHT" language="java" name="org.logchan.core.ApacheLogParser" project="LogChan" 
+    file="/LogChan/src/org/logchan/core/ApacheLogParser.java" binary="false">    
+    <position x="473" y="306" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -10,29 +10,88 @@
   </class>  
   <class id="2" corner="BOTTOM_RIGHT" language="java" name="org.logchan.core.LogReader" project="LogChan" 
     file="/LogChan/src/org/logchan/core/LogReader.java" binary="false">    
-    <position height="146" width="192" x="72" y="195"/>    
+    <position x="433" y="507" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <package id="3" corner="BOTTOM_RIGHT" language="java" name="org.logchan.core" project="LogChan" 
-    file="/LogChan/src/org/logchan/core" binary="false">    
-    <position height="49" width="120" x="120" y="81"/>    
-    <display autosize="true" stereotype="true"/>  
-  </package>  
-  <interface id="4" corner="BOTTOM_RIGHT" language="java" name="org.logchan.core.LogParseable" project="LogChan" 
+  <class id="3" corner="BOTTOM_RIGHT" language="java" name="org.logchan.rules.LogRuleEngine" project="LogChan" 
+    file="/LogChan/src/org/logchan/rules/LogRuleEngine.java" binary="false">    
+    <position x="167" y="156" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="org.logchan.rules.RuleManager" project="LogChan" 
+    file="/LogChan/src/org/logchan/rules/RuleManager.java" binary="false">    
+    <position x="166" y="423" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
+  <interface id="5" corner="BOTTOM_RIGHT" language="java" name="org.logchan.core.LogParseable" project="LogChan" 
     file="/LogChan/src/org/logchan/core/LogParseable.java" binary="false">    
-    <position height="78" width="201" x="315" y="95"/>    
+    <position x="473" y="79" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </interface>  
-  <dependency id="5">    
+  <interface id="6" corner="BOTTOM_RIGHT" language="java" name="org.logchan.formats.LogFormattable" project="LogChan" 
+    file="/LogChan/src/org/logchan/formats/LogFormattable.java" binary="false">    
+    <position x="117" y="568" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <interface id="7" corner="BOTTOM_RIGHT" language="java" name="org.logchan.model.LogModelable" project="LogChan" 
+    file="/LogChan/src/org/logchan/model/LogModelable.java" binary="false">    
+    <position x="678" y="563" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <interface id="8" corner="BOTTOM_RIGHT" language="java" name="org.logchan.model.ModelHandleable" project="LogChan" 
+    file="/LogChan/src/org/logchan/model/ModelHandleable.java" binary="false">    
+    <position x="648" y="663" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <interface id="9" corner="BOTTOM_RIGHT" language="java" name="org.logchan.reports.Chartable" project="LogChan" 
+    file="/LogChan/src/org/logchan/reports/Chartable.java" binary="false">    
+    <position x="658" y="472" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <interface id="10" corner="BOTTOM_RIGHT" language="java" name="org.logchan.util.DataMarshallable" project="LogChan" 
+    file="/LogChan/src/org/logchan/util/DataMarshallable.java" binary="false">    
+    <position x="220" y="677" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </interface>  
+  <association id="11">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="12" name="logRuleEngine"/>      
+      <multiplicity id="13" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="14">    
     <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="2"/>  
-  </dependency>  
+    <end type="TARGET" refId="5"/>  
+  </realization>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     visibility="true">    
     <attributes public="true" package="true" protected="true" private="true"/>    
