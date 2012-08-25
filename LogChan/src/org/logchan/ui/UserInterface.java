@@ -33,7 +33,6 @@ import org.jdesktop.swingx.MultiSplitLayout.Leaf;
 import org.jdesktop.swingx.MultiSplitLayout.Node;
 import org.jdesktop.swingx.MultiSplitLayout.Split;
 import org.jdesktop.swingx.MultiSplitPane;
-import org.jfree.chart.JFreeChart;
 import org.logchan.core.ApacheLogParser;
 import org.logchan.core.DefaultFlowController;
 import org.logchan.core.FlowControllable;
@@ -42,7 +41,6 @@ import org.logchan.core.SystemConstants;
 import org.logchan.core.SystemMappings;
 import org.logchan.formats.LGCFilter;
 import org.logchan.model.TableData;
-import org.logchan.reports.LogChart;
 
 public class UserInterface extends JFrame implements ActionListener {
 	/**
@@ -60,6 +58,7 @@ public class UserInterface extends JFrame implements ActionListener {
 	private JButton runButton;
 	private JButton clearButton;
 	private JButton addTemplateButton;
+	private JButton deriveTemplateButton;
 	private JButton recomendationsButton;
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
@@ -164,7 +163,7 @@ public class UserInterface extends JFrame implements ActionListener {
 		constraints.gridy = 2;
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.insets = new Insets(10, 10, 0, 0);
-		midPanel.add(getAddRegexButton(), constraints);
+		midPanel.add(getRegexButtons(), constraints);
 		constraints.gridy = 2;
 		constraints.insets = new Insets(10, 10, 0, 0);
 		constraints.anchor = GridBagConstraints.WEST;
@@ -298,7 +297,6 @@ public class UserInterface extends JFrame implements ActionListener {
 							messages = flowController.parseFile(filename,
 									logPatternField.getText());
 							if (!messages.isEmpty()) {
-								flowController.printMetaData();
 								flowController.processRules();
 								flowController.generateRecommendations();
 								metaMap = flowController.getOutputData();
@@ -307,8 +305,10 @@ public class UserInterface extends JFrame implements ActionListener {
 								recommendationViewer = new RecommendationViewer(
 										metaMap);
 								recommendationViewer.populateRecommendations();
-								//JFreeChart timeChart = new LogChart().createChart(flowController.getTimeMarshalledData(messages, metaMap));
-								//recommendationViewer.addChart(timeChart);
+								// JFreeChart timeChart = new
+								// LogChart().createChart(flowController.getTimeMarshalledData(messages,
+								// metaMap));
+								// recommendationViewer.addChart(timeChart);
 								getRecomendationsButton().setEnabled(true);
 								getClearButton().setEnabled(true);
 							} else {
@@ -415,7 +415,7 @@ public class UserInterface extends JFrame implements ActionListener {
 		fileChooser.setSelectedFile(new File(System.getProperty("user.dir")));
 		fileChooser.resetChoosableFileFilters();
 		fileChooser.setAcceptAllFileFilterUsed(true);
-		
+
 		if (selectedFile != null && new File(selectedFile).exists()) {
 			fileChooser.setSelectedFile(new File(selectedFile));
 		}
@@ -460,6 +460,18 @@ public class UserInterface extends JFrame implements ActionListener {
 		return panel;
 	}
 
+	private JPanel getRegexButtons() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.anchor = GridBagConstraints.EAST;
+		constraints.insets = new Insets(2, 2, 2, 2);
+		panel.add(getAddRegexButton(), constraints);
+		constraints.gridx = 1;
+		panel.add(getDeriveTemplateButton(), constraints);
+		return panel;
+	}
+	
 	private JButton getAddRegexButton() {
 		if (addTemplateButton == null) {
 			addTemplateButton = new JButton("Add Format Regex");
@@ -477,6 +489,32 @@ public class UserInterface extends JFrame implements ActionListener {
 			});
 		}
 		return addTemplateButton;
+	}
+
+	private JButton getDeriveTemplateButton() {
+		if (deriveTemplateButton == null) {
+			deriveTemplateButton = new JButton("Derive Regex");
+			deriveTemplateButton.setEnabled(true);
+			deriveTemplateButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					// TODO Auto-generated method stub
+					try {
+						// String regexPattern = SystemMappings.EXPRESSION_MAP
+						// .get((String) comboBox.getSelectedItem());
+						logPatternField.setText(flowController
+								.getDerivedRegex(filename));
+						splitPane.validate();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		
+		return deriveTemplateButton;
 	}
 
 	private JButton getRecomendationsButton() {
