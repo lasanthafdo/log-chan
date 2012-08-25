@@ -2,7 +2,7 @@
   associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" corner="BOTTOM_RIGHT" language="java" name="org.logchan.rules.RuleManager" project="LogChan" 
     file="/LogChan/src/org/logchan/rules/RuleManager.java" binary="false">    
-    <position height="95" width="126" x="175" y="134"/>    
+    <position x="175" y="134" width="126" height="95"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -10,9 +10,22 @@
   </class>  
   <package id="2" corner="BOTTOM_RIGHT" language="java" name="org.logchan.rules" project="LogChan" 
     file="/LogChan/src/org/logchan/rules" binary="false">    
-    <position height="49" width="123" x="132" y="74"/>    
+    <position x="166" y="97" width="-1" height="-1"/>    
     <display autosize="true" stereotype="true"/>  
   </package>  
+  <package id="3" corner="BOTTOM_RIGHT" language="java" name="org.logchan.test" project="LogChan" 
+    file="/LogChan/src/org/logchan/test" binary="false">    
+    <position x="527" y="63" width="116" height="49"/>    
+    <display autosize="true" stereotype="true"/>  
+  </package>  
+  <class id="4" corner="BOTTOM_RIGHT" language="java" name="org.logchan.test.RuleExample" project="LogChan" 
+    file="/LogChan/src/org/logchan/test/RuleExample.java" binary="false">    
+    <position x="399" y="158" width="190" height="112"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true"/>      
+      <operations public="true" package="true" protected="true" private="true"/>    
+    </display>  
+  </class>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     visibility="true">    
     <attributes public="true" package="true" protected="true" private="true"/>    
