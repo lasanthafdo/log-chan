@@ -307,11 +307,8 @@ public class UserInterface extends JFrame implements ActionListener {
 								recommendationViewer = new RecommendationViewer(
 										metaMap);
 								recommendationViewer.populateRecommendations();
-								JFreeChart timeChart = new LogChart()
-										.createChart(flowController
-												.getTimeMarshalledData(
-														messages, metaMap));
-								recommendationViewer.addChart(timeChart);
+								//JFreeChart timeChart = new LogChart().createChart(flowController.getTimeMarshalledData(messages, metaMap));
+								//recommendationViewer.addChart(timeChart);
 								getRecomendationsButton().setEnabled(true);
 								getClearButton().setEnabled(true);
 							} else {
