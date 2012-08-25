@@ -65,8 +65,7 @@ public class DefaultFlowController implements FlowControllable {
 			parser.setMatchMode(SystemConstants.MATCH_FROM_START);
 			iStream = logReader.getInputStream(filename);
 			messages = parser.parseLog(iStream);
-			columnTypes = parser.deriveColumnTypes(logReader.getInputStream(filename));			
-
+			columnTypes = parser.deriveColumnTypes(logReader.getInputStream(filename));		
 			metaMap = parser.getMetaData();
 			metaMap.put(SystemConstants.LOG_TYPE, format.getFormatName());
 			metaMap.put(SystemConstants.LOG_DELIMITER, format.getDelimiter());
