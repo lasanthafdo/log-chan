@@ -1,7 +1,9 @@
 package org.logchan.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,6 +17,8 @@ import org.logchan.model.ModelHandleable;
 import org.logchan.reports.ResultInterpretable;
 import org.logchan.reports.WebLogInterpreter;
 import org.logchan.rules.RuleManager;
+import org.logchan.templates.TemplateDiscoverable;
+import org.logchan.templates.TemplateDiscoverer;
 import org.logchan.util.DataMarshallable;
 import org.logchan.util.HTTPDMarshaller;
 
@@ -33,6 +37,7 @@ public class DefaultFlowController implements FlowControllable {
 	private RuleManager ruleManager;
 	private ResultInterpretable resultInterpreter = null;
 	private DataMarshallable dataMarshaller = null;
+	private TemplateDiscoverable tempDiscoverer = null;
 
 	public static DefaultFlowController getInstance() {
 		if (instance == null) {
@@ -45,12 +50,13 @@ public class DefaultFlowController implements FlowControllable {
 	private DefaultFlowController() {
 		parser = new ApacheLogParser();
 		logReader = new LogReader();
-		metaMap = null;
+		metaMap = new HashMap<String, Object>();
 		messages = null;
 		modelHandler = new DefaultModelHandler();
 		ruleManager = new RuleManager();
 		resultInterpreter = WebLogInterpreter.getInstance();
 		dataMarshaller = new HTTPDMarshaller();
+		tempDiscoverer = new TemplateDiscoverer();
 	}
 
 	@Override
@@ -60,13 +66,16 @@ public class DefaultFlowController implements FlowControllable {
 		messages = null;
 		iStream = null;
 		if (filename != null) {
-			LogFormattable format = new HTTPDLogFormat(SystemConstants.HTTPD_NCSA, formatPattern);
+			LogFormattable format = new HTTPDLogFormat(
+					SystemConstants.HTTPD_NCSA, formatPattern);
 			parser.setLogFormat(format);
 			parser.setMatchMode(SystemConstants.MATCH_FROM_START);
 			iStream = logReader.getInputStream(filename);
 			messages = parser.parseLog(iStream);
-			columnTypes = parser.deriveColumnTypes(logReader.getInputStream(filename));		
-			metaMap = parser.getMetaData();
+			columnTypes = parser.deriveColumnTypes(logReader
+					.getInputStream(filename));
+
+			metaMap.putAll(parser.getMetaData());
 			metaMap.put(SystemConstants.LOG_TYPE, format.getFormatName());
 			metaMap.put(SystemConstants.LOG_DELIMITER, format.getDelimiter());
 			metaMap.put(SystemConstants.LOG_NULL_CHAR, format.getLogNullChar());
@@ -123,18 +132,25 @@ public class DefaultFlowController implements FlowControllable {
 	public Map<String, Object> getOutputData() {
 		return metaMap;
 	}
-	
+
 	@Override
-	public Map<String, Integer> getTimeMarshalledData(List<String[]> messages, Map<String, Object> metaMap) {
-		if(dataMarshaller != null) {
+	public Map<String, Integer> getTimeMarshalledData(List<String[]> messages,
+			Map<String, Object> metaMap) {
+		if (dataMarshaller != null) {
 			return dataMarshaller.getDataSet(messages, metaMap);
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public void saveFile(String filename) throws IOException {
 		LogWriter.writeToFile(filename, messages, metaMap);
+	}
+	
+	@Override
+	public String getDerivedRegex(String filename) throws IOException {
+		metaMap.putAll(tempDiscoverer.discoverTemplate(filename, new File(filename).length()));
+		return (String)metaMap.get(SystemConstants.DERIVED_REGEX);
 	}
 }

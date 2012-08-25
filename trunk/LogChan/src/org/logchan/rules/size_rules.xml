@@ -17,8 +17,6 @@
 				(OBJECT ?A))
 			=&gt;
 			(modify ?weblog (logSizeStatus 1))
-			(printout t "The status of log file size is "
-				(get ?W logSizeStatus) crlf)
 		)
 	</code>
 </rule-execution-set>

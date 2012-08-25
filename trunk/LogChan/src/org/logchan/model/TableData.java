@@ -16,8 +16,6 @@ public class TableData {
 	}
 
 	public TableModel getModel() {
-		System.out.println("Line Count: " + data.size());
-		System.out.println("No. of columns: " + columnNames.size());
 		return new DefaultTableModel(data, columnNames) {
 			/**
 			 * 
