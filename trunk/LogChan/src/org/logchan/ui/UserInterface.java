@@ -40,6 +40,7 @@ import org.logchan.core.FlowControllable;
 import org.logchan.core.LogReader;
 import org.logchan.core.SystemConstants;
 import org.logchan.core.SystemMappings;
+import org.logchan.formats.LGCFilter;
 import org.logchan.model.TableData;
 import org.logchan.reports.LogChart;
 
@@ -51,11 +52,11 @@ public class UserInterface extends JFrame implements ActionListener {
 
 	private RecommendationViewer recommendationViewer;
 	private JEditorPane logFileContentArea;
-	private JEditorPane parseOutputArea;
 	private JTextField sourceFilePathField;
 	private JTextField logPatternField;
 	private JComboBox comboBox;
 	private JFileChooser fileChooser;
+	private FileFilter fileFilter;
 	private JButton runButton;
 	private JButton clearButton;
 	private JButton addTemplateButton;
@@ -264,14 +265,6 @@ public class UserInterface extends JFrame implements ActionListener {
 		return logFileContentArea;
 	}
 
-	private JEditorPane getParseOutputArea() throws IOException {
-		if (parseOutputArea == null) {
-			parseOutputArea = new JEditorPane();
-			parseOutputArea.setEditable(false);
-		}
-		return parseOutputArea;
-	}
-
 	private JPanel getFileBrowsePanel() {
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
@@ -314,7 +307,10 @@ public class UserInterface extends JFrame implements ActionListener {
 								recommendationViewer = new RecommendationViewer(
 										metaMap);
 								recommendationViewer.populateRecommendations();
-								JFreeChart timeChart = new LogChart().createChart(flowController.getTimeMarshalledData(messages, metaMap));
+								JFreeChart timeChart = new LogChart()
+										.createChart(flowController
+												.getTimeMarshalledData(
+														messages, metaMap));
 								recommendationViewer.addChart(timeChart);
 								getRecomendationsButton().setEnabled(true);
 								getClearButton().setEnabled(true);
@@ -325,10 +321,9 @@ public class UserInterface extends JFrame implements ActionListener {
 										"Log-Chan", JOptionPane.ERROR_MESSAGE);
 							}
 						} else {
-							JOptionPane.showMessageDialog(
-									UserInterface.this,
-									"Please select log format",
-									"Log-Chan", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(UserInterface.this,
+									"Please select log format", "Log-Chan",
+									JOptionPane.INFORMATION_MESSAGE);
 						}
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -397,7 +392,6 @@ public class UserInterface extends JFrame implements ActionListener {
 						sourceFilePathField.setText(dialog.getSelectedFile()
 								.getAbsolutePath());
 						getLogFileContentArea().setText(content);
-						getParseOutputArea().setText(getTemplate());
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -417,28 +411,44 @@ public class UserInterface extends JFrame implements ActionListener {
 	private JFileChooser getFileOpenDialog(String selectedFile) {
 		if (fileChooser == null) {
 			fileChooser = new JFileChooser();
-			fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			fileChooser.setMultiSelectionEnabled(false);
-			fileChooser.setAcceptAllFileFilterUsed(false);
-			fileChooser
-					.setSelectedFile(new File(System.getProperty("user.dir")));
-			fileChooser.setFileFilter(new FileFilter() {
-				@Override
-				public String getDescription() {
-					return "*.log or Any File";
-				}
-
-				@Override
-				public boolean accept(File file) {
-					return true;
-				}
-			});
 		}
+		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
+		fileChooser.setSelectedFile(new File(System.getProperty("user.dir")));
+		fileChooser.resetChoosableFileFilters();
+		fileChooser.setAcceptAllFileFilterUsed(true);
+		
 		if (selectedFile != null && new File(selectedFile).exists()) {
 			fileChooser.setSelectedFile(new File(selectedFile));
 		}
 		return fileChooser;
+	}
+
+	private JFileChooser getFileSaveDialog(String selectedFile) {
+		if (fileChooser == null) {
+			fileChooser = new JFileChooser();
+		}
+		fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		fileChooser.addChoosableFileFilter(getLgcFileFilter());
+		if (selectedFile != null && new File(selectedFile).exists()) {
+			File prevFile = new File(selectedFile);
+			fileChooser.setSelectedFile(new File(prevFile.getParentFile(),
+					prevFile.getName() + ".lgc"));
+		}
+
+		return fileChooser;
+	}
+
+	private FileFilter getLgcFileFilter() {
+		if (fileFilter == null) {
+			fileFilter = new LGCFilter();
+		}
+
+		return fileFilter;
 	}
 
 	private JPanel getBottomButtons() {
@@ -608,10 +618,6 @@ public class UserInterface extends JFrame implements ActionListener {
 
 	}
 
-	private String getTemplate() {
-		return "Please specify template";
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
@@ -623,8 +629,19 @@ public class UserInterface extends JFrame implements ActionListener {
 				recommendationViewer.setVisible(true);
 		} else if (actionCommand.equals("REFRESH")) {
 		} else if (actionCommand.equals("SAVE")) {
+			JFileChooser dialog = getFileSaveDialog(filename);
+			int option = dialog.showSaveDialog(UserInterface.this);
+			if (option == JFileChooser.APPROVE_OPTION) {
+				try {
+					filename = dialog.getSelectedFile().getAbsolutePath();
+					flowController.saveFile(filename);
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
 		} else if (actionCommand.equals("VIEW_ABOUT")) {
 		} else if (actionCommand.equals("EXIT")) {
+			this.dispose();
 		} else if (actionCommand.equals("HELP")) {
 			try {
 				File f = new File(".");

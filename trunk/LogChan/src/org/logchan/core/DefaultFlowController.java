@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.logchan.formats.HTTPDLogFormat;
+import org.logchan.formats.LogFormattable;
 import org.logchan.model.DefaultModelHandler;
 import org.logchan.model.HTTPDLogModeler;
 import org.logchan.model.ModelHandleable;
@@ -59,14 +60,17 @@ public class DefaultFlowController implements FlowControllable {
 		messages = null;
 		iStream = null;
 		if (filename != null) {
-			parser.setLogFormat(new HTTPDLogFormat(SystemConstants.HTTPD_NCSA,
-					formatPattern));
+			LogFormattable format = new HTTPDLogFormat(SystemConstants.HTTPD_NCSA, formatPattern);
+			parser.setLogFormat(format);
 			parser.setMatchMode(SystemConstants.MATCH_FROM_START);
 			iStream = logReader.getInputStream(filename);
 			messages = parser.parseLog(iStream);
 			columnTypes = parser.deriveColumnTypes(logReader.getInputStream(filename));			
 
 			metaMap = parser.getMetaData();
+			metaMap.put(SystemConstants.LOG_TYPE, format.getFormatName());
+			metaMap.put(SystemConstants.LOG_DELIMITER, format.getDelimiter());
+			metaMap.put(SystemConstants.LOG_NULL_CHAR, format.getLogNullChar());
 			metaMap.put(SystemConstants.LOG_FILENAME, filename);
 			metaMap.put(SystemConstants.COL_DATA_TYPES, columnTypes);
 		}
@@ -128,5 +132,10 @@ public class DefaultFlowController implements FlowControllable {
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public void saveFile(String filename) throws IOException {
+		LogWriter.writeToFile(filename, messages, metaMap);
 	}
 }
