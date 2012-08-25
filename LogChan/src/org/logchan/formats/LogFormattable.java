@@ -1,10 +1,12 @@
 package org.logchan.formats;
 
 public interface LogFormattable {
-	public void setFormatType(int type);
-	public int getFormatType();
-	
+	public void setParams(String delimiter, String formatName, String logNullChar);
 	public void setRegex(String regex);
-	public String getRegex();
 	
+	public int getFormatType();	
+	public String getRegex();
+	public String getFormatName();
+	public String getDelimiter();
+	public String getLogNullChar();
 }
