@@ -59,7 +59,6 @@ public class HTTPDMarshaller implements DataMarshallable {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-
 		return dataMap;
 	}
 
