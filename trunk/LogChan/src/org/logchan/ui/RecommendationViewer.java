@@ -1,7 +1,5 @@
 package org.logchan.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -22,7 +20,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
 import org.logchan.core.SystemConstants;
 
 public class RecommendationViewer extends JDialog {
@@ -79,16 +76,16 @@ public class RecommendationViewer extends JDialog {
 		constraints.weighty = 0.5;
 		chartJP.add(chartPanel, constraints);
 		chartJP.validate();
-		constraints.gridy = 0;
-		constraints.gridx = 2;
-		constraints.gridheight = 2;
+		constraints.gridy = 2;
+		constraints.gridx = 0;
+		constraints.gridwidth= 2;
 		constraints.insets = new Insets(5, 5, 5, 5);
 		this.add(chartJP,constraints);
 	}
 	
 	private void initialize() {
 		this.setTitle("Recommendations");
-		this.setSize(800, 600);
+		this.setSize(800, 800);
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		JPanel textPanel = new JPanel(new GridBagLayout());

@@ -52,7 +52,6 @@ public class HTTPDMarshaller implements DataMarshallable {
 					if(dataMap.containsKey(endHour)){
 						classCount = dataMap.get(endHour) + classCount;
 					}
-					System.out.println(endHour + " - " + classCount);
 					dataMap.put(endHour,classCount);
 					countAdded = true;
 					endCal.add(Calendar.HOUR_OF_DAY, 1);

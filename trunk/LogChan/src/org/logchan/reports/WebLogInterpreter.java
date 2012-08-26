@@ -32,7 +32,7 @@ public class WebLogInterpreter implements ResultInterpretable {
 	@Override
 	public List<String> getInterpretedRecommendations(List<Object> results) {
 		// TODO Auto-generated method stub
-		populateRecommendations();		
+		populateRecommendations();
 		List<String> msgList = new ArrayList<String>();
 		Iterator<Object> itr = results.iterator();
 		while (itr.hasNext()) {
@@ -50,12 +50,13 @@ public class WebLogInterpreter implements ResultInterpretable {
 	private String interpretResult(Object resultObj) {
 		String recommendationMsg = "No recommendation regarding this property";
 		Recommendation rec = null;
-			if (resultObj instanceof WebServerLog) {
-				rec = webRecMap.get(((WebServerLog) resultObj)
-						.getLogSizeStatus());
+		if (resultObj instanceof WebServerLog) {
+			rec = webRecMap.get(((WebServerLog) resultObj).getLogSizeStatus());
+			if(rec != null)
 				recommendationMsg = rec.getRecommendationMsg();
-			}
-
+			System.out.println("Log file status: " + ((WebServerLog)resultObj).getLogSizeStatus());			
+		}
+		
 		return recommendationMsg;
 	}
 }

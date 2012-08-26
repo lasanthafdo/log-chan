@@ -24,6 +24,7 @@ public class HTTPDLogModeler implements LogModelable {
 				.get(SystemConstants.TOT_BYTES_READ));
 		webLog.setLineCount((Integer) metaData
 				.get(SystemConstants.TOT_LINE_COUNT));
+		srcApp.setStandardLogRate(2000);
 		inputList.add(webLog);
 		inputList.add(srcApp);
 
