@@ -7,6 +7,7 @@ import java.util.Map;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.SymbolAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
@@ -17,21 +18,21 @@ public class LogChart implements Chartable {
 	private XYSeries values;
 	
 	@Override
-	public ChartPanel createChart(Map<Integer, Integer> dataMap) {
+	public ChartPanel createChart(Map<Integer , Integer> dataMap) {
 		// TODO Auto-generated method stub
 		JFreeChart chart = null;
 		//DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
-		int i = 10;
-		values = new XYSeries("CPU",true,false);
+		values = new XYSeries("LogRate",true,false);
 		
 		for(Integer key:dataMap.keySet()) {
-            System.out.println(key);
-			values.add(i,dataMap.get(key));
-			i=i+10;
+			if(key == 24){
+				key = 0;
+			}
+			values.add(key,dataMap.get(key));
 		}
 
 //		System.out.println(dataMap.keySet().size());
-	    chart = new JFreeChart("CPU Usage", getPlot());   
+	    chart = new JFreeChart("Log Generation Rate", getPlot());   
 	    chart.removeLegend();
 	    return new ChartPanel(chart, true, true, true, true, true);
 		
@@ -43,7 +44,7 @@ public class LogChart implements Chartable {
 
 	  private XYPlot getPlot() {
 		  	  XYPlot plot = new XYPlot(new XYSeriesCollection(values), getDomainAxis(), getRangeAxis(), getRenderer());
-		      plot.setBackgroundPaint(Color.BLACK);
+		  	  plot.setBackgroundPaint(Color.BLACK);
 		      plot.setDomainGridlinePaint(new Color(25, 255, 52));
 		      plot.setRangeGridlinePaint(new Color(25, 255, 52));
 		      plot.setOutlinePaint(Color.BLACK);
@@ -51,25 +52,25 @@ public class LogChart implements Chartable {
 		      plot.setDomainMinorGridlinePaint(new Color(14,124,35));
 		      plot.setRangeMinorGridlinesVisible(true);
 		      plot.setRangeMinorGridlinePaint(new Color(14,124,35));
-		  	return plot;
+		  	  return plot;
 		  }
 		  private NumberAxis getDomainAxis() {
-		  	NumberAxis domainAxis = new NumberAxis("Last 100 Sec.");
+		  	NumberAxis domainAxis = new NumberAxis("Hours of the Day");
 		  	domainAxis.setAutoRange(false);
 		  	domainAxis.setAxisLinePaint(Color.BLACK);
 		  	domainAxis.setNegativeArrowVisible(false);
-		  	domainAxis.setUpperBound(1000);
+		  	domainAxis.setUpperBound(23);
 		  	return domainAxis;
 		  }
 		  private NumberAxis getRangeAxis() {
-		  	NumberAxis rangeAxis = new NumberAxis("CPU usage ( % )");
-		      rangeAxis.setAutoRange(false);
-		      rangeAxis.setAxisLinePaint(Color.BLACK);
-		      rangeAxis.setNegativeArrowVisible(false);
-		      rangeAxis.setUpperBound(100);
-		      rangeAxis.setTickLabelFont(new Font("SansSerif", Font.PLAIN, 12));
-		      rangeAxis.setLabelFont(new Font("SansSerif", Font.PLAIN, 14));
-		      rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+		  	NumberAxis rangeAxis = new NumberAxis("No. of Log Messages");
+		    rangeAxis.setAutoRange(false);
+		    rangeAxis.setAxisLinePaint(Color.BLACK);
+		    rangeAxis.setNegativeArrowVisible(false);
+		    rangeAxis.setUpperBound(1000);
+		    rangeAxis.setTickLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+		    rangeAxis.setLabelFont(new Font("SansSerif", Font.PLAIN, 14));
+		    rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		  	return rangeAxis;
 		  }
 		   private XYItemRenderer getRenderer(){

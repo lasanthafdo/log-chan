@@ -134,7 +134,7 @@ public class DefaultFlowController implements FlowControllable {
 	}
 
 	@Override
-	public Map<String, Integer> getTimeMarshalledData(List<String[]> messages,
+	public Map<Integer, Integer> getTimeMarshalledData(List<String[]> messages,
 			Map<String, Object> metaMap) {
 		if (dataMarshaller != null) {
 			return dataMarshaller.getDataSet(messages, metaMap);

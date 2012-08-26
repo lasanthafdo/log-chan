@@ -4,5 +4,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface DataMarshallable {
-	public Map<String, Integer> getDataSet(List<String[]> messages, Map<String, Object> metaMap);
+	public Map<Integer, Integer> getDataSet(List<String[]> messages, Map<String, Object> metaMap);
 }
