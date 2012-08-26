@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -33,6 +34,7 @@ import org.jdesktop.swingx.MultiSplitLayout.Leaf;
 import org.jdesktop.swingx.MultiSplitLayout.Node;
 import org.jdesktop.swingx.MultiSplitLayout.Split;
 import org.jdesktop.swingx.MultiSplitPane;
+import org.jfree.chart.ChartPanel;
 import org.logchan.core.ApacheLogParser;
 import org.logchan.core.DefaultFlowController;
 import org.logchan.core.FlowControllable;
@@ -41,6 +43,7 @@ import org.logchan.core.SystemConstants;
 import org.logchan.core.SystemMappings;
 import org.logchan.formats.LGCFilter;
 import org.logchan.model.TableData;
+import org.logchan.reports.LogChart;
 
 public class UserInterface extends JFrame implements ActionListener {
 	/**
@@ -309,6 +312,22 @@ public class UserInterface extends JFrame implements ActionListener {
 								// LogChart().createChart(flowController.getTimeMarshalledData(messages,
 								// metaMap));
 								// recommendationViewer.addChart(timeChart);
+								Map<Integer, Integer> dataMap = new HashMap<Integer, Integer>();
+								dataMap.put(2, 5);
+								dataMap.put(8, 20);
+								dataMap.put(10, 35);
+								dataMap.put(20, 15);
+								dataMap.put(25, 45);
+								dataMap.put(30, 55);
+								dataMap.put(40, 50);
+								dataMap.put(50, 40);
+								dataMap.put(55, 70);
+								dataMap.put(60, 80);
+								dataMap.put(67, 70);
+								dataMap.put(80, 74);
+								dataMap.put(88, 60);
+								ChartPanel panel = new LogChart().createChart(dataMap);
+								recommendationViewer.addChart(panel);
 								getRecomendationsButton().setEnabled(true);
 								getClearButton().setEnabled(true);
 							} else {
