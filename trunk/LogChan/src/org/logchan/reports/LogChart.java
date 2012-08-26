@@ -7,7 +7,6 @@ import java.util.Map;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.SymbolAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
@@ -19,9 +18,7 @@ public class LogChart implements Chartable {
 	
 	@Override
 	public ChartPanel createChart(Map<Integer , Integer> dataMap) {
-		// TODO Auto-generated method stub
 		JFreeChart chart = null;
-		//DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
 		values = new XYSeries("LogRate",true,false);
 		
 		for(Integer key:dataMap.keySet()) {
@@ -31,15 +28,10 @@ public class LogChart implements Chartable {
 			values.add(key,dataMap.get(key));
 		}
 
-//		System.out.println(dataMap.keySet().size());
 	    chart = new JFreeChart("Log Generation Rate", getPlot());   
 	    chart.removeLegend();
 	    return new ChartPanel(chart, true, true, true, true, true);
 		
-//		chart = ChartFactory.createBarChart("Log Generation Rate", 
-//				"Time", "Count", dataSet, PlotOrientation.VERTICAL, false, true, false);
-//		chart.setBackgroundPaint(Color.BLACK);		
-//		setPlot(chart);
 	}	 
 
 	  private XYPlot getPlot() {

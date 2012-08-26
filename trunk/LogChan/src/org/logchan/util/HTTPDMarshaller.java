@@ -39,9 +39,8 @@ public class HTTPDMarshaller implements DataMarshallable {
 		try {
 			Integer classCount = 0;
 			endCal.setTime(dateFormat.parse(messages.get(0)[colIndex]));
-			//int startHour = endCal.get(Calendar.HOUR_OF_DAY);  // + ":" + String.valueOf(endCal.get(Calendar.MINUTE))
 			endCal.add(Calendar.HOUR_OF_DAY, 1);
-			int endHour =endCal.get(Calendar.HOUR_OF_DAY);  // + ":" + String.valueOf(endCal.get(Calendar.MINUTE))
+			int endHour =endCal.get(Calendar.HOUR_OF_DAY);  
 			boolean countAdded = false;
 			for (String[] strArray : messages){
 				Calendar currentCal = Calendar.getInstance();
@@ -56,9 +55,8 @@ public class HTTPDMarshaller implements DataMarshallable {
 					System.out.println(endHour + " - " + classCount);
 					dataMap.put(endHour,classCount);
 					countAdded = true;
-				//	startHour = endHour;
 					endCal.add(Calendar.HOUR_OF_DAY, 1);
-					endHour = endCal.get(Calendar.HOUR_OF_DAY);  // + ":" + String.valueOf(endCal.get(Calendar.MINUTE))
+					endHour = endCal.get(Calendar.HOUR_OF_DAY); 
 					classCount = 0;
 				}
 			}
