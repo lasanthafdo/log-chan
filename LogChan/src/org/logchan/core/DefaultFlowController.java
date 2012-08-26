@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.logchan.formats.GenericLogFormat;
 import org.logchan.formats.HTTPDLogFormat;
 import org.logchan.formats.LogFormattable;
 import org.logchan.model.DefaultModelHandler;
@@ -48,14 +49,14 @@ public class DefaultFlowController implements FlowControllable {
 	}
 
 	private DefaultFlowController() {
-		parser = new ApacheLogParser();
+		parser = null;
 		logReader = new LogReader();
 		metaMap = new HashMap<String, Object>();
 		messages = null;
 		modelHandler = new DefaultModelHandler();
 		ruleManager = new RuleManager();
-		resultInterpreter = WebLogInterpreter.getInstance();
-		dataMarshaller = new HTTPDMarshaller();
+		resultInterpreter = null;
+		dataMarshaller = null;
 		tempDiscoverer = new TemplateDiscoverer();
 	}
 
@@ -66,21 +67,33 @@ public class DefaultFlowController implements FlowControllable {
 		messages = null;
 		iStream = null;
 		if (filename != null) {
-			LogFormattable format = new HTTPDLogFormat(
-					SystemConstants.HTTPD_NCSA, formatPattern);
-			parser.setLogFormat(format);
-			parser.setMatchMode(SystemConstants.MATCH_FROM_START);
+			LogFormattable format = null;
+			if (metaMap.get(SystemConstants.DERIVED_REGEX) != null) {
+				format = new GenericLogFormat(formatPattern);
+				parser = new RegexLogParser(format);
+			} else {
+				format = new HTTPDLogFormat(SystemConstants.HTTPD_NCSA,
+						formatPattern);
+				parser = new ApacheLogParser();
+				parser.setLogFormat(format);
+				parser.setMatchMode(SystemConstants.MATCH_FROM_START);
+
+				metaMap.put(SystemConstants.LOG_TYPE, format.getFormatType());
+				metaMap.put(SystemConstants.LOG_DELIMITER,
+						format.getDelimiter());
+				metaMap.put(SystemConstants.LOG_NULL_CHAR,
+						format.getLogNullChar());
+			}
 			iStream = logReader.getInputStream(filename);
 			messages = parser.parseLog(iStream);
-			columnTypes = parser.deriveColumnTypes(logReader
-					.getInputStream(filename));
-
+			if (metaMap.get(SystemConstants.COL_DATA_TYPES) == null) {
+				columnTypes = parser.deriveColumnTypes(logReader
+						.getInputStream(filename));
+				metaMap.put(SystemConstants.COL_DATA_TYPES, columnTypes);
+			}
 			metaMap.putAll(parser.getMetaData());
-			metaMap.put(SystemConstants.LOG_TYPE, format.getFormatName());
-			metaMap.put(SystemConstants.LOG_DELIMITER, format.getDelimiter());
-			metaMap.put(SystemConstants.LOG_NULL_CHAR, format.getLogNullChar());
 			metaMap.put(SystemConstants.LOG_FILENAME, filename);
-			metaMap.put(SystemConstants.COL_DATA_TYPES, columnTypes);
+
 		}
 
 		return messages;
@@ -122,7 +135,12 @@ public class DefaultFlowController implements FlowControllable {
 
 	@Override
 	public void generateRecommendations() {
-		if (ruleResults != null) {
+		if(resultInterpreter == null) {
+			if(metaMap.get(SystemConstants.LOG_TYPE).equals(SystemConstants.HTTPD_NCSA)) {
+				resultInterpreter = WebLogInterpreter.getInstance();
+			}
+		}
+		if (ruleResults != null && resultInterpreter != null) {
 			metaMap.put(SystemConstants.REC_LIST, resultInterpreter
 					.getInterpretedRecommendations(ruleResults));
 		}
@@ -134,8 +152,13 @@ public class DefaultFlowController implements FlowControllable {
 	}
 
 	@Override
-	public Map<Integer, Integer> getTimeMarshalledData(List<String[]> messages,
-			Map<String, Object> metaMap) {
+	public Map<Integer, Integer> getTimeMarshalledData(List<String[]> messages) {
+		if(dataMarshaller == null) {
+			if(metaMap.get(SystemConstants.LOG_TYPE).equals(SystemConstants.HTTPD_NCSA)) {
+				dataMarshaller = new HTTPDMarshaller();
+			}
+		}
+		
 		if (dataMarshaller != null) {
 			return dataMarshaller.getDataSet(messages, metaMap);
 		}
@@ -147,10 +170,20 @@ public class DefaultFlowController implements FlowControllable {
 	public void saveFile(String filename) throws IOException {
 		LogWriter.writeToFile(filename, messages, metaMap);
 	}
-	
+
 	@Override
 	public String getDerivedRegex(String filename) throws IOException {
-		metaMap.putAll(tempDiscoverer.discoverTemplate(filename, new File(filename).length()));
-		return (String)metaMap.get(SystemConstants.DERIVED_REGEX);
+		metaMap.putAll(tempDiscoverer.discoverTemplate(filename, new File(
+				filename).length()));
+		return (String) metaMap.get(SystemConstants.DERIVED_REGEX);
+	}
+
+	@Override
+	public void reset() {
+		parser = null;
+		metaMap.clear();
+		messages = null;
+		resultInterpreter = null;
+		dataMarshaller = null;
 	}
 }

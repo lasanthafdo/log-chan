@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -35,7 +34,6 @@ import org.jdesktop.swingx.MultiSplitLayout.Node;
 import org.jdesktop.swingx.MultiSplitLayout.Split;
 import org.jdesktop.swingx.MultiSplitPane;
 import org.jfree.chart.ChartPanel;
-import org.logchan.core.ApacheLogParser;
 import org.logchan.core.DefaultFlowController;
 import org.logchan.core.FlowControllable;
 import org.logchan.core.LogReader;
@@ -70,8 +68,7 @@ public class UserInterface extends JFrame implements ActionListener {
 	private JMenuItem saveMenuItem;
 	private JMenuItem aboutMenuItem;
 	private JMenuItem helpMenuItem;
-	private JMenuItem removeMenuItem;
-	private JMenuItem refreshMenuItem;
+	private JMenuItem clearMenuItem;
 	private JMenuItem exitMenuItem;
 
 	private MultiSplitPane splitPane;
@@ -151,12 +148,11 @@ public class UserInterface extends JFrame implements ActionListener {
 		constraints.gridy = 0;
 		midPanel.add(midProperties, constraints);
 		// Add mid scroll pane
-		logPatternField = new JTextField();
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.gridy = 1;
 		constraints.gridwidth = 3;
 		constraints.insets = new Insets(0, 0, 0, 0);
-		midPanel.add(logPatternField, constraints);
+		midPanel.add(getLogPatternField(), constraints);
 		constraints.gridwidth = 1;
 		constraints.fill = GridBagConstraints.NONE;
 		constraints.anchor = GridBagConstraints.EAST;
@@ -219,7 +215,7 @@ public class UserInterface extends JFrame implements ActionListener {
 		Vector<Vector<String>> data = new Vector<Vector<String>>();
 		for (String[] message : messages) {
 			Vector<String> element = new Vector<String>();
-			for (int i = 0; i < ApacheLogParser.NUM_FIELDS; i++) {
+			for (int i = 0; i < message.length; i++) {
 				element.add(i, message[i]);
 			}
 			data.add(element);
@@ -305,14 +301,19 @@ public class UserInterface extends JFrame implements ActionListener {
 								metaMap = flowController.getOutputData();
 								displayOutput((Vector<Class<?>>) metaMap
 										.get(SystemConstants.COL_DATA_TYPES));
-								recommendationViewer = new RecommendationViewer(
-										metaMap);
-								recommendationViewer.populateRecommendations();
-								Map<Integer, Integer> dataMap = flowController.getTimeMarshalledData(messages,metaMap);
-								System.out.println(dataMap.size());
-								ChartPanel panel = new LogChart().createChart(dataMap);
-								recommendationViewer.addChart(panel);
-								getRecomendationsButton().setEnabled(true);
+								if (metaMap.get(SystemConstants.LOG_TYPE)
+										.equals(SystemConstants.HTTPD_NCSA)) {
+									recommendationViewer = new RecommendationViewer(
+											metaMap);
+									recommendationViewer
+											.populateRecommendations();
+									Map<Integer, Integer> dataMap = flowController
+											.getTimeMarshalledData(messages);
+									ChartPanel panel = new LogChart()
+											.createChart(dataMap);
+									recommendationViewer.addChart(panel);
+									getRecomendationsButton().setEnabled(true);
+								}
 								getClearButton().setEnabled(true);
 							} else {
 								JOptionPane.showMessageDialog(
@@ -342,24 +343,11 @@ public class UserInterface extends JFrame implements ActionListener {
 			clearButton = new JButton("Clear");
 			clearButton.setToolTipText("Clear the current data");
 			clearButton.setEnabled(false);
-			clearButton.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					try {
-						clearOutput();
-						getLogFileContentArea().setText("");
-						getSourceFilePathField().setText("");
-						getRecomendationsButton().setEnabled(false);
-						getClearButton().setEnabled(false);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				}
-			});
+			clearButton.setActionCommand("CLEAR");
+			clearButton.addActionListener(this);
 
 		}
+		
 		return clearButton;
 	}
 
@@ -406,6 +394,13 @@ public class UserInterface extends JFrame implements ActionListener {
 			sourceFilePathField = new JTextField(filename);
 		}
 		return sourceFilePathField;
+	}
+
+	private JTextField getLogPatternField() {
+		if (logPatternField == null) {
+			logPatternField = new JTextField();
+		}
+		return logPatternField;
 	}
 
 	private JFileChooser getFileOpenDialog(String selectedFile) {
@@ -474,7 +469,7 @@ public class UserInterface extends JFrame implements ActionListener {
 		panel.add(getDeriveTemplateButton(), constraints);
 		return panel;
 	}
-	
+
 	private JButton getAddRegexButton() {
 		if (addTemplateButton == null) {
 			addTemplateButton = new JButton("Add Format Regex");
@@ -502,21 +497,17 @@ public class UserInterface extends JFrame implements ActionListener {
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					// TODO Auto-generated method stub
 					try {
-						// String regexPattern = SystemMappings.EXPRESSION_MAP
-						// .get((String) comboBox.getSelectedItem());
 						logPatternField.setText(flowController
 								.getDerivedRegex(filename));
 						splitPane.validate();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			});
 		}
-		
+
 		return deriveTemplateButton;
 	}
 
@@ -591,8 +582,7 @@ public class UserInterface extends JFrame implements ActionListener {
 	private JMenu getEditMenu() {
 		editMenu = new JMenu();
 		editMenu.setText("Edit");
-		editMenu.add(getRefreshMenuItem());
-		editMenu.add(getRemoveMenuItem());
+		editMenu.add(getClearMenuItem());
 		return editMenu;
 	}
 
@@ -612,24 +602,15 @@ public class UserInterface extends JFrame implements ActionListener {
 		return exitMenuItem;
 	}
 
-	private JMenuItem getRefreshMenuItem() {
+	private JMenuItem getClearMenuItem() {
 
-		refreshMenuItem = new JMenuItem("Refresh");
-		refreshMenuItem.setActionCommand("REFRESH");
-		refreshMenuItem.addActionListener(this);
-		return refreshMenuItem;
-	}
-
-	private JMenuItem getRemoveMenuItem() {
-
-		removeMenuItem = new JMenuItem("Remove");
-		removeMenuItem.setActionCommand("REMOVE");
-		removeMenuItem.addActionListener(this);
-		return removeMenuItem;
+		clearMenuItem = new JMenuItem("Clear");
+		clearMenuItem.setActionCommand("CLEAR");
+		clearMenuItem.addActionListener(this);
+		return clearMenuItem;
 	}
 
 	private JMenuItem getHelpMenuItem() {
-
 		helpMenuItem = new JMenuItem("Help");
 		helpMenuItem.setActionCommand("HELP");
 		helpMenuItem.addActionListener(this);
@@ -665,7 +646,19 @@ public class UserInterface extends JFrame implements ActionListener {
 		} else if (actionCommand.equals(ACTION_COMMAND_VIEW_RECOMENDATIONS)) {
 			if (recommendationViewer != null)
 				recommendationViewer.setVisible(true);
-		} else if (actionCommand.equals("REFRESH")) {
+		} else if (actionCommand.equals("CLEAR")) {
+			try {
+				clearOutput();
+				getLogFileContentArea().setText("");
+				getSourceFilePathField().setText("");
+				getLogPatternField().setText("");
+				flowController.reset();
+				getRecomendationsButton().setEnabled(false);
+				getClearButton().setEnabled(false);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		} else if (actionCommand.equals("SAVE")) {
 			JFileChooser dialog = getFileSaveDialog(filename);
 			int option = dialog.showSaveDialog(UserInterface.this);

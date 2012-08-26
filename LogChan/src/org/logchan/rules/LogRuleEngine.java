@@ -21,6 +21,8 @@ import javax.rules.admin.RuleExecutionSet;
 import javax.rules.admin.RuleExecutionSetCreateException;
 import javax.rules.admin.RuleExecutionSetRegisterException;
 
+import org.logchan.model.WebServerLog;
+
 public class LogRuleEngine {
 	// The rule service provider URI as defined by the reference implementation.
 
@@ -89,6 +91,9 @@ public class LogRuleEngine {
 
 	public void setInput(List<Object> input) {
 		this.input = input;
+		for(Object obj: input)
+			if(obj instanceof WebServerLog)
+				System.out.println("Stat: " + ((WebServerLog)obj).getLogSizeStatus());
 	}
 
 	public List<Object> processRulesFromResource(String resourceName) {

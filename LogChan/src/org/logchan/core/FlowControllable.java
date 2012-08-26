@@ -29,9 +29,11 @@ public interface FlowControllable {
 	
 	public Map<String, Object> getOutputData();
 	
-	public Map<Integer, Integer> getTimeMarshalledData(List<String[]> messages, Map<String, Object> metaMap);
+	public Map<Integer, Integer> getTimeMarshalledData(List<String[]> messages);
 	
 	public void saveFile(String filename) throws IOException;
 	
 	public String getDerivedRegex(String filename) throws IOException;
+	
+	public void reset();
 }

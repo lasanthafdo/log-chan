@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="lib/jcommon-1.0.17.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.14.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/Users/lasantha/workspace/JFreeChart/doc/"/>
+			<attribute name="javadoc_location" value="file:/media/windows/Users/lasantha/workspace/JFreeChart/doc/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>

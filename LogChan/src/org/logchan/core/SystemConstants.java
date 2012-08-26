@@ -19,6 +19,7 @@ public class SystemConstants {
 	public static final String LOG_NULL_CHAR = "Null Char";
 	public static final String DERIVED_REGEX = "Regex";
 	
+	public static final int UNKNOWN_FORMAT = 0;
 	public static final int HTTPD_NCSA = 1;
 
 	public static final String META_DATA_HEAD = "/~BEGIN META DATA~/";
