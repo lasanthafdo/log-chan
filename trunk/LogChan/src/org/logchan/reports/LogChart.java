@@ -17,14 +17,14 @@ public class LogChart implements Chartable {
 	private XYSeries values;
 	
 	@Override
-	public ChartPanel createChart(Map<String, Integer> dataMap) {
+	public ChartPanel createChart(Map<Integer, Integer> dataMap) {
 		// TODO Auto-generated method stub
 		JFreeChart chart = null;
 		//DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
 		int i = 10;
 		values = new XYSeries("CPU",true,false);
 		
-		for(String key:dataMap.keySet()) {
+		for(Integer key:dataMap.keySet()) {
             System.out.println(key);
 			values.add(i,dataMap.get(key));
 			i=i+10;

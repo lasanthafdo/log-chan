@@ -6,5 +6,5 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
 public interface Chartable {
-	ChartPanel createChart(Map<String, Integer> dataMap);
+	ChartPanel createChart(Map<Integer, Integer> dataMap);
 }
