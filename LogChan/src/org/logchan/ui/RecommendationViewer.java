@@ -21,6 +21,7 @@ import javax.swing.text.StyledDocument;
 
 import org.jfree.chart.ChartPanel;
 import org.logchan.core.SystemConstants;
+import org.logchan.reports.Recommendation;
 
 public class RecommendationViewer extends JDialog {
 
@@ -48,17 +49,18 @@ public class RecommendationViewer extends JDialog {
 		StyleConstants.setItalic(attribs, true);
 
 		try {
-			for (String key : keySet) {
-				if (key.equals(SystemConstants.REC_LIST)
-						&& dataMap.get(key) instanceof List<?>) {
-					List<String> recMsgs = (List<String>) dataMap.get(key);
-					for (String msg : recMsgs)
-						doc.insertString(doc.getLength(), msg + "\n", attribs);
-				}
+			Object obj = dataMap.get(SystemConstants.REC_LIST);
+			if (obj instanceof List<?>) {
+				List<Recommendation> recList = (List<Recommendation>) obj;
+				for (Recommendation rec : recList)
+					doc.insertString(doc.getLength(),
+							rec.getRecommendationMsg() + "\n", attribs);
+
 			}
-			if(doc.getLength() == 0) {
+			if (doc.getLength() == 0) {
 				doc.insertString(0, "No recommendations!!!\n", attribs);
 			}
+
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -70,7 +72,7 @@ public class RecommendationViewer extends JDialog {
 	public void addChart(ChartPanel chartPanel) {
 		JPanel chartJP = new JPanel(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.insets = new Insets(5, 5, 5, 5);		
+		constraints.insets = new Insets(5, 5, 5, 5);
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 0.5;
 		constraints.weighty = 0.5;
@@ -78,11 +80,11 @@ public class RecommendationViewer extends JDialog {
 		chartJP.validate();
 		constraints.gridy = 2;
 		constraints.gridx = 0;
-		constraints.gridwidth= 2;
+		constraints.gridwidth = 2;
 		constraints.insets = new Insets(5, 5, 5, 5);
-		this.add(chartJP,constraints);
+		this.add(chartJP, constraints);
 	}
-	
+
 	private void initialize() {
 		this.setTitle("Recommendations");
 		this.setSize(800, 800);

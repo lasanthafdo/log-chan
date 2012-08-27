@@ -1,18 +1,35 @@
 package org.logchan.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.logchan.reports.Recommendation;
+
 public abstract class LogFile {
 	private int fileSize;
 	private int lineCount;
+	private int dimensionality;
 	private String filename;
+	
+	private List<Recommendation> recList;
 	
 	public LogFile(String filename) {
 		this.filename = filename;
+		recList = new ArrayList<Recommendation>();
 	}
 
 	public int getFileSize() {
 		return fileSize;
 	}
 
+	public List<Recommendation> getRecList() {
+		return recList;
+	}
+	
+	public void addRecommendation(Recommendation rec) {
+		recList.add(rec);
+	}
+	
 	public void setFileSize(int fileSize) {
 		this.fileSize = fileSize;
 	}
@@ -33,5 +50,12 @@ public abstract class LogFile {
 		this.filename = filename;
 	}
 
-	public abstract void parseLog();
+	public int getDimensionality() {
+		return dimensionality;
+	}
+
+	public void setDimensionality(int dimensionality) {
+		this.dimensionality = dimensionality;
+	}
+
 }

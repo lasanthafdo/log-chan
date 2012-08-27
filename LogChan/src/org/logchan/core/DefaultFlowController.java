@@ -13,10 +13,10 @@ import org.logchan.formats.GenericLogFormat;
 import org.logchan.formats.HTTPDLogFormat;
 import org.logchan.formats.LogFormattable;
 import org.logchan.model.DefaultModelHandler;
+import org.logchan.model.GenericLogModeler;
 import org.logchan.model.HTTPDLogModeler;
+import org.logchan.model.LogFile;
 import org.logchan.model.ModelHandleable;
-import org.logchan.reports.ResultInterpretable;
-import org.logchan.reports.WebLogInterpreter;
 import org.logchan.rules.RuleManager;
 import org.logchan.templates.TemplateDiscoverable;
 import org.logchan.templates.TemplateDiscoverer;
@@ -36,7 +36,7 @@ public class DefaultFlowController implements FlowControllable {
 	private InputStream iStream = null;
 	private ModelHandleable modelHandler = null;
 	private RuleManager ruleManager;
-	private ResultInterpretable resultInterpreter = null;
+
 	private DataMarshallable dataMarshaller = null;
 	private TemplateDiscoverable tempDiscoverer = null;
 
@@ -55,7 +55,6 @@ public class DefaultFlowController implements FlowControllable {
 		messages = null;
 		modelHandler = new DefaultModelHandler();
 		ruleManager = new RuleManager();
-		resultInterpreter = null;
 		dataMarshaller = null;
 		tempDiscoverer = new TemplateDiscoverer();
 	}
@@ -127,24 +126,25 @@ public class DefaultFlowController implements FlowControllable {
 	public void processRules() {
 		if (metaMap != null) {
 			modelHandler.setMetaData(metaMap);
-			List<Object> inputList = modelHandler
-					.getInputList(new HTTPDLogModeler());
+			List<Object> inputList;
+			if(metaMap.get(SystemConstants.LOG_TYPE).equals(SystemConstants.HTTPD_NCSA))
+				inputList = modelHandler.getInputList(new HTTPDLogModeler());
+			else
+				inputList = modelHandler.getInputList(new GenericLogModeler());
+			
 			ruleResults = ruleManager.getRuleResults(inputList);
+			if(!ruleResults.isEmpty()) {
+				for(Object obj : ruleResults) {
+					if(obj instanceof LogFile) {
+						metaMap.put(SystemConstants.REC_LIST, ((LogFile)obj).getRecList());
+						break;
+					}
+				}
+			}
 		}
 	}
 
-	@Override
-	public void generateRecommendations() {
-		if(resultInterpreter == null) {
-			if(metaMap.get(SystemConstants.LOG_TYPE).equals(SystemConstants.HTTPD_NCSA)) {
-				resultInterpreter = WebLogInterpreter.getInstance();
-			}
-		}
-		if (ruleResults != null && resultInterpreter != null) {
-			metaMap.put(SystemConstants.REC_LIST, resultInterpreter
-					.getInterpretedRecommendations(ruleResults));
-		}
-	}
+
 
 	@Override
 	public Map<String, Object> getOutputData() {
@@ -183,7 +183,6 @@ public class DefaultFlowController implements FlowControllable {
 		parser = null;
 		metaMap.clear();
 		messages = null;
-		resultInterpreter = null;
 		dataMarshaller = null;
 	}
 }

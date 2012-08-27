@@ -9,12 +9,6 @@ public class WebServerLog extends LogFile {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public void parseLog() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public int getLogSizeStatus() {
 		return logSizeStatus;
 	}
