@@ -167,6 +167,8 @@ public class RecommendationViewer extends JDialog {
 		panel.add(new JLabel("Maximum Column No: " + dataMap.get(SystemConstants.MAX_COL)), constraints);
 		constraints.gridy = ++currentY;
 		panel.add(new JLabel("Mininmum Column No: " + dataMap.get(SystemConstants.MIN_COL)), constraints);
+		constraints.gridy = ++currentY;
+		panel.add(new JLabel("Time taken for parsing: " + dataMap.get(SystemConstants.PARSE_TIME) + " seconds"), constraints);
 
 		return panel;
 	}

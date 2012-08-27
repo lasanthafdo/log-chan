@@ -184,6 +184,7 @@ public class DefaultFlowController implements FlowControllable {
 	public void reset() {
 		parser = null;
 		metaMap.clear();
+		metaMap = new HashMap<String, Object>();
 		messages = null;
 		dataMarshaller = null;
 	}

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -29,6 +30,8 @@ public class RegexLogParser implements LogParseable {
 		int totCount = 0, matchCount = 0, totalBytes = 0;
 		int groupCountMax = 0;
 		int groupCountMin = Integer.MAX_VALUE;
+		long start_time = 0;
+		long tot_time = 0;
 
 		if (is != null) {
 			messages = new ArrayList<String[]>();
@@ -37,10 +40,10 @@ public class RegexLogParser implements LogParseable {
 			String line = null;
 			Pattern regex = Pattern.compile(logEntryPattern);
 
-			System.out.println("Col#: " + metaData.get(SystemConstants.IDENTIFIED_COL));
 			Matcher regexMatcher;
 			String[] splitString;
 			List<String> matchList = new ArrayList<String>();
+			start_time = Calendar.getInstance().getTimeInMillis();
 			while ((line = reader.readLine()) != null) {
 				totCount++;
 				totalBytes += line.length();
@@ -61,11 +64,12 @@ public class RegexLogParser implements LogParseable {
 				splitString = matchList.toArray(new String[0]);
 				if(splitString.length >= (Integer)metaData.get(SystemConstants.IDENTIFIED_COL)) {
 					matchCount++;
-					matchList.clear();
 					messages.add(splitString);
 				}
+				matchList.clear();				
 			}
-
+			tot_time = Calendar.getInstance().getTimeInMillis() - start_time;
+			metaData.put(SystemConstants.PARSE_TIME, (Double)(tot_time/(double)1000));
 			metaData.put(SystemConstants.TOT_LINE_COUNT, new Integer(totCount));
 			metaData.put(SystemConstants.TOT_LINE_PARSED, new Integer(
 					matchCount));
