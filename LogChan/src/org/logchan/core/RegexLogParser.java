@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -19,9 +18,9 @@ public class RegexLogParser implements LogParseable {
 	private String logEntryPattern = "";
 	private Map<String, Object> metaData;
 
-	public RegexLogParser(LogFormattable format) {
+	public RegexLogParser(LogFormattable format, Map<String, Object> metaMap) {
 		this.logEntryPattern = format.getRegex();
-		metaData = new HashMap<String, Object>();
+		metaData = metaMap;
 	}
 	
 	@Override
@@ -38,6 +37,7 @@ public class RegexLogParser implements LogParseable {
 			String line = null;
 			Pattern regex = Pattern.compile(logEntryPattern);
 
+			System.out.println("Col#: " + metaData.get(SystemConstants.IDENTIFIED_COL));
 			Matcher regexMatcher;
 			String[] splitString;
 			List<String> matchList = new ArrayList<String>();
@@ -53,15 +53,17 @@ public class RegexLogParser implements LogParseable {
 					} else {
 						matchList.add(regexMatcher.group());
 					}
-					matchCount++;
 				}
 				if(groupCountMax < matchList.size())
 					groupCountMax = matchList.size();
 				if(groupCountMin > matchList.size())
 					groupCountMin = matchList.size();
 				splitString = matchList.toArray(new String[0]);
-				matchList.clear();
-				messages.add(splitString);
+				if(splitString.length >= (Integer)metaData.get(SystemConstants.IDENTIFIED_COL)) {
+					matchCount++;
+					matchList.clear();
+					messages.add(splitString);
+				}
 			}
 
 			metaData.put(SystemConstants.TOT_LINE_COUNT, new Integer(totCount));
@@ -71,8 +73,8 @@ public class RegexLogParser implements LogParseable {
 					new Integer(totalBytes));
 			metaData.put(SystemConstants.AVG_BYTES_PER_LINE, new Double(
 					totalBytes / (double) totCount));
-			metaData.put(SystemConstants.MAX_COL, new Integer(groupCountMin));
-			metaData.put(SystemConstants.MIN_COL, new Integer(groupCountMax));
+			metaData.put(SystemConstants.MAX_COL, new Integer(groupCountMax));
+			metaData.put(SystemConstants.MIN_COL, new Integer(groupCountMin));
 		}
 		
 		return messages;

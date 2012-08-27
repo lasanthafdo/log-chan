@@ -11,6 +11,7 @@ public class SystemConstants {
 	public static final String AVG_BYTES_PER_LINE = "Average Bytes per Line";
 	public static final String MAX_COL = "Maximum Columns";
 	public static final String MIN_COL = "Minimum Columns";	
+	public static final String IDENTIFIED_COL = "Identified No of Columns";
 	public static final String LOG_FILENAME = "Filename";
 	public static final String REC_LIST = "Recommendations List";
 	public static final String COL_DATA_TYPES = "Column Data Types";

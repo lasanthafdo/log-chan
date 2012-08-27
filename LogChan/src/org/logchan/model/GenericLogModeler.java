@@ -7,7 +7,7 @@ import java.util.Map;
 import org.logchan.core.SystemConstants;
 
 public class GenericLogModeler implements LogModelable {
-	private GenericLog genericLog;
+	private LogFile genericLog;
 	private SourceApplication srcApp;
 	
 	public GenericLogModeler() {
@@ -23,6 +23,7 @@ public class GenericLogModeler implements LogModelable {
 				.get(SystemConstants.TOT_BYTES_READ));
 		genericLog.setLineCount((Integer) metaData
 				.get(SystemConstants.TOT_LINE_COUNT));
+		genericLog.setParsedLineCount((Integer)metaData.get(SystemConstants.TOT_LINE_PARSED));
 		srcApp.setStandardLogRate(10000);
 		inputList.add(genericLog);
 		inputList.add(srcApp);

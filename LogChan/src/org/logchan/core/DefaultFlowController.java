@@ -69,7 +69,7 @@ public class DefaultFlowController implements FlowControllable {
 			LogFormattable format = null;
 			if (metaMap.get(SystemConstants.DERIVED_REGEX) != null) {
 				format = new GenericLogFormat(formatPattern);
-				parser = new RegexLogParser(format);
+				parser = new RegexLogParser(format, metaMap);
 			} else {
 				format = new HTTPDLogFormat(SystemConstants.HTTPD_NCSA,
 						formatPattern);
