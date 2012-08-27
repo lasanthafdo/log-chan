@@ -1,5 +1,6 @@
 package org.logchan.ui;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -45,14 +46,21 @@ public class RecommendationViewer extends JDialog {
 		SimpleAttributeSet attribs = new SimpleAttributeSet();
 		StyleConstants.setFontFamily(attribs, "Verdana");
 		StyleConstants.setItalic(attribs, true);
+		StyleConstants.setBold(attribs, true);
 
 		try {
 			Object obj = dataMap.get(SystemConstants.REC_LIST);
 			if (obj instanceof List<?>) {
 				List<Recommendation> recList = (List<Recommendation>) obj;
-				for (Recommendation rec : recList)
+				for (Recommendation rec : recList) {
+					if(rec.isStatusOK()) {
+						StyleConstants.setForeground(attribs, Color.BLUE);
+					} else {
+						StyleConstants.setForeground(attribs, Color.BLACK);
+					}
 					doc.insertString(doc.getLength(),
 							rec.getRecommendationMsg() + "\n", attribs);
+				}
 
 			}
 			if (doc.getLength() == 0) {
@@ -72,8 +80,8 @@ public class RecommendationViewer extends JDialog {
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.insets = new Insets(5, 5, 5, 5);
 		constraints.fill = GridBagConstraints.BOTH;
-		constraints.weightx = 0.5;
-		constraints.weighty = 0.5;
+		constraints.weightx = 0.9;
+		constraints.weighty = 0.7;
 		chartJP.add(chartPanel, constraints);
 		chartJP.validate();
 		constraints.gridy = 2;
@@ -83,11 +91,11 @@ public class RecommendationViewer extends JDialog {
 		this.add(chartJP, constraints);
 	}
 
-	public void addInforPanel() {
+	public void addInfoPanel() {
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = GridBagConstraints.VERTICAL;
-		constraints.weightx = 0.5;
-		constraints.weighty = 0.5;
+		constraints.weightx = 0.2;
+		constraints.weighty = 0.2;
 		constraints.gridy = 0;
 		constraints.gridx = 2;
 		constraints.gridheight = 2;
@@ -104,7 +112,7 @@ public class RecommendationViewer extends JDialog {
 		JLabel recLabel = new JLabel("Recommendations");
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.insets = new Insets(0, 5, 10, 0);
-		constraints.weightx = 0.5;
+		constraints.weightx = 0.9;
 		constraints.weighty = 0;
 		textPanel.add(recLabel, constraints);
 		constraints.gridy = 1;
@@ -126,6 +134,7 @@ public class RecommendationViewer extends JDialog {
 	private JPanel getButtons() {
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.insets = new Insets(2, 5, 2, 5);
 		panel.add(getExportButton(), constraints);
 		constraints.gridx = 1;
 		panel.add(getCloseButton(), constraints);
@@ -135,28 +144,30 @@ public class RecommendationViewer extends JDialog {
 	private JPanel getInfoPanel() {
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
+		int currentY = 0;
 		constraints.anchor = GridBagConstraints.WEST;
 		panel.add(
 				new JLabel("Total Lines: "
 						+ dataMap.get(SystemConstants.TOT_LINE_COUNT)),
 				constraints);
-		constraints.gridy = 1;
+		constraints.gridy = ++currentY;
 		panel.add(
 				new JLabel("Total Lines Parsed: "
 						+ dataMap.get(SystemConstants.TOT_LINE_PARSED)),
 				constraints);
-		constraints.gridy = 2;
+		constraints.gridy = ++currentY;
 		panel.add(new JLabel("Avg Line Width: " + dataMap.get(SystemConstants.AVG_BYTES_PER_LINE) + " bytes"), constraints);
-		constraints.gridy = 3;
+		constraints.gridy = ++currentY;
+		panel.add(new JLabel("Total Bytes Read: " + dataMap.get(SystemConstants.TOT_BYTES_READ) + " bytes"), constraints);
+		if(dataMap.get(SystemConstants.IDENTIFIED_COL) != null) {
+			constraints.gridy = ++currentY;
+			panel.add(new JLabel("Identified no of Columns: " + dataMap.get(SystemConstants.IDENTIFIED_COL)), constraints);
+		}
+		constraints.gridy = ++currentY;
 		panel.add(new JLabel("Maximum Column No: " + dataMap.get(SystemConstants.MAX_COL)), constraints);
-		constraints.gridy = 4;
+		constraints.gridy = ++currentY;
 		panel.add(new JLabel("Mininmum Column No: " + dataMap.get(SystemConstants.MIN_COL)), constraints);
 
-		if(dataMap.get(SystemConstants.IDENTIFIED_COL) != null) {
-			constraints.gridy = 2;
-			constraints.gridx = 1;
-			panel.add(new JLabel(", Identified no of Columns: " + dataMap.get(SystemConstants.IDENTIFIED_COL)), constraints);
-		}
 		return panel;
 	}
 

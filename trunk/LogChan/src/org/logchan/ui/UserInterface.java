@@ -303,11 +303,10 @@ public class UserInterface extends JFrame implements ActionListener {
 								recommendationViewer = new RecommendationViewer(
 										metaMap);
 								recommendationViewer.populateRecommendations();
-								recommendationViewer.addInforPanel();
-								if (metaMap.get(SystemConstants.LOG_TYPE)
-										.equals(SystemConstants.HTTPD_NCSA)) {
-									Map<Integer, Integer> dataMap = flowController
-											.getTimeMarshalledData(messages);
+								recommendationViewer.addInfoPanel();
+								Map<Integer, Integer> dataMap = flowController
+										.getTimeMarshalledData(messages);
+								if (dataMap != null) {
 									ChartPanel panel = new LogChart()
 											.createChart(dataMap);
 									recommendationViewer.addChart(panel);
@@ -373,12 +372,22 @@ public class UserInterface extends JFrame implements ActionListener {
 						.getText());
 				int option = dialog.showOpenDialog(UserInterface.this);
 				if (option == JFileChooser.APPROVE_OPTION) {
+//					BufferedReader reader = null;
 					try {
 						filename = dialog.getSelectedFile().getAbsolutePath();
-						String content = new LogReader().readFile(filename);
 						sourceFilePathField.setText(dialog.getSelectedFile()
 								.getAbsolutePath());
+						String content = new LogReader().readFile(filename);
 						getLogFileContentArea().setText(content);
+						
+//						reader = new BufferedReader(new InputStreamReader(
+//								new LogReader().getInputStream(filename)));
+//						Document doc = getLogFileContentArea().getDocument();
+//						String str;
+//						while ((str = reader.readLine()) != null) {
+//							doc.insertString(doc.getLength(), str + "\n", null);
+//						}
+//						reader.close();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
