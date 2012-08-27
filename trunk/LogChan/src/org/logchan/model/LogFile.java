@@ -8,6 +8,7 @@ import org.logchan.reports.Recommendation;
 public abstract class LogFile {
 	private int fileSize;
 	private int lineCount;
+	private int parsedLineCount;
 	private int dimensionality;
 	private String filename;
 	
@@ -56,6 +57,14 @@ public abstract class LogFile {
 
 	public void setDimensionality(int dimensionality) {
 		this.dimensionality = dimensionality;
+	}
+
+	public int getParsedLineCount() {
+		return parsedLineCount;
+	}
+
+	public void setParsedLineCount(int parsedLineCount) {
+		this.parsedLineCount = parsedLineCount;
 	}
 
 }

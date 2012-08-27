@@ -51,7 +51,7 @@ public class TemplateDiscoverer implements TemplateDiscoverable {
 			scores[j] = getCandidateScore(parseMap);
 			Map<String, Object> summaryMap = new HashMap<String, Object>();
 			summaryMap.put(SystemConstants.DERIVED_REGEX, regexStr);
-			summaryMap.put(SystemConstants.MAX_COL, (Integer)Collections.max((List<Integer>)parseMap.get("COL_COUNT")));
+			summaryMap.put(SystemConstants.IDENTIFIED_COL, (Integer)Collections.max((List<Integer>)parseMap.get("COL_COUNT")));
 			summaryMap.put(SystemConstants.COL_DATA_TYPES, ((List<Vector<?>>)parseMap.get("DATA_TYPES")).get(0));
 			summaryMap.put(SystemConstants.LOG_DELIMITER, delimiter);
 			summaryMap.put(SystemConstants.LOG_TYPE, SystemConstants.UNKNOWN_FORMAT);

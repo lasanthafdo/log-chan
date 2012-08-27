@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -41,7 +40,6 @@ public class RecommendationViewer extends JDialog {
 	}
 
 	public void populateRecommendations() {
-		Set<String> keySet = dataMap.keySet();
 		StyledDocument doc = getRecommendationsArea().getStyledDocument();
 		getRecommendationsArea().setText("");
 		SimpleAttributeSet attribs = new SimpleAttributeSet();
@@ -80,11 +78,23 @@ public class RecommendationViewer extends JDialog {
 		chartJP.validate();
 		constraints.gridy = 2;
 		constraints.gridx = 0;
-		constraints.gridwidth = 2;
+		constraints.gridwidth = 3;
 		constraints.insets = new Insets(5, 5, 5, 5);
 		this.add(chartJP, constraints);
 	}
 
+	public void addInforPanel() {
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.fill = GridBagConstraints.VERTICAL;
+		constraints.weightx = 0.5;
+		constraints.weighty = 0.5;
+		constraints.gridy = 0;
+		constraints.gridx = 2;
+		constraints.gridheight = 2;
+		constraints.insets = new Insets(5, 5, 5, 5);
+		this.add(getInfoPanel(), constraints);		
+	}
+	
 	private void initialize() {
 		this.setTitle("Recommendations");
 		this.setSize(800, 800);
@@ -119,6 +129,34 @@ public class RecommendationViewer extends JDialog {
 		panel.add(getExportButton(), constraints);
 		constraints.gridx = 1;
 		panel.add(getCloseButton(), constraints);
+		return panel;
+	}
+
+	private JPanel getInfoPanel() {
+		JPanel panel = new JPanel(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.anchor = GridBagConstraints.WEST;
+		panel.add(
+				new JLabel("Total Lines: "
+						+ dataMap.get(SystemConstants.TOT_LINE_COUNT)),
+				constraints);
+		constraints.gridy = 1;
+		panel.add(
+				new JLabel("Total Lines Parsed: "
+						+ dataMap.get(SystemConstants.TOT_LINE_PARSED)),
+				constraints);
+		constraints.gridy = 2;
+		panel.add(new JLabel("Avg Line Width: " + dataMap.get(SystemConstants.AVG_BYTES_PER_LINE) + " bytes"), constraints);
+		constraints.gridy = 3;
+		panel.add(new JLabel("Maximum Column No: " + dataMap.get(SystemConstants.MAX_COL)), constraints);
+		constraints.gridy = 4;
+		panel.add(new JLabel("Mininmum Column No: " + dataMap.get(SystemConstants.MIN_COL)), constraints);
+
+		if(dataMap.get(SystemConstants.IDENTIFIED_COL) != null) {
+			constraints.gridy = 2;
+			constraints.gridx = 1;
+			panel.add(new JLabel(", Identified no of Columns: " + dataMap.get(SystemConstants.IDENTIFIED_COL)), constraints);
+		}
 		return panel;
 	}
 

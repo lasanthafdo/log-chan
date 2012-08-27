@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -20,7 +21,7 @@ public class LogWriter {
 			out.println(SystemConstants.META_DATA_HEAD);
 			for(String key: metaData.keySet()) {
 				Object value = metaData.get(key);
-				if(value instanceof String) 
+				if(!(value instanceof Collection<?>)) 
 					out.println(key + ":" + value);
 			}
 			

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rule-execution-set>
 
-	<name>SizeToLCRatio</name>
+	<name>LogChanRules</name>
 	<description>Stateless rule execution set for log-chan</description>
 
 	<code>
+		(defclass org.logchan.model.GenericLog org.logchan.model.GenericLog)
 		(defclass org.logchan.model.WebServerLog org.logchan.model.WebServerLog)
 		(defclass org.logchan.model.SourceApplication
 		org.logchan.model.SourceApplication)
 		(defclass org.logchan.reports.Recommendation org.logchan.reports.Recommendation)
-		(defclass org.logchan.model.GenericLog org.logchan.model.GenericLog)
-		(defclass org.logchan.model.LogFile org.logchan.model.LogFile)
+
 		
 		(defrule size-ratio
 			?weblog &lt;- (org.logchan.model.WebServerLog
@@ -21,22 +21,37 @@
 				(OBJECT ?A))
 			=&gt;
 			(call ?W addRecommendation (new org.logchan.reports.Recommendation FALSE "The log lines are too many for this file"))
-			(printout t "Added recommendation");
+			(printout t "Added recommendation" crlf)
 		)
 		
 		(defrule generic-size
 			?genlog &lt;- (org.logchan.model.GenericLog
-				(lineCount ?count)
-				(OBJECT ?G))
+				(lineCount ?count) (OBJECT ?G))
 			?app &lt;- (org.logchan.model.SourceApplication
 				(standardLogRate ?rate&amp;:(&gt; ?count ?rate))
 				(OBJECT ?A))
 			=&gt;
 			(call ?G addRecommendation (new org.logchan.reports.Recommendation FALSE "The log lines are too many for this file"))
-			(printout t "Added recommendation");
-		)
-		
+			(printout t "Added recommendation for generic log!" crlf)
+		)		
 
+		(defrule generic-cluster
+			(org.logchan.model.GenericLog {lineCount &lt; 10000} (OBJECT ?G))
+			=&gt;
+			(call ?G addRecommendation (new org.logchan.reports.Recommendation TRUE "If clustering algorithms are used, the best algorithm is Teiresias (Use Sisyphus Toolkit)"))
+			(printout t "Added algo recommendation for generic log!" crlf)
+		)		
+
+		(defrule corrupt-lines
+			?genericlog &lt;- (org.logchan.model.GenericLog (lineCount ?lc)
+			 	(parsedLineCount ?plc) (OBJECT ?G))
+			(corruption-rate ?crate&amp;:(&gt;= (/ (- ?lc ?plc) ?lc) 0.0))
+			=&gt;
+			(?recMsg (- ?genericlog.lineCount genericlog.parsedLineCount) " corrupted lines found. Corruption rate is greater than 10%. You should use a clustering technique for analyzing this file.")
+			(call ?G addRecommendation (new org.logchan.reports.Recommandation FALSE ?recMsg))
+			(printout t "Added recommendation for corrupted lines" crlf)
+			(printout t ?crate crlf)	
+		) 
 		 
 	</code>
 </rule-execution-set>

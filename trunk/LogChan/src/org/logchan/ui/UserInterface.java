@@ -300,19 +300,19 @@ public class UserInterface extends JFrame implements ActionListener {
 								metaMap = flowController.getOutputData();
 								displayOutput((Vector<Class<?>>) metaMap
 										.get(SystemConstants.COL_DATA_TYPES));
+								recommendationViewer = new RecommendationViewer(
+										metaMap);
+								recommendationViewer.populateRecommendations();
+								recommendationViewer.addInforPanel();
 								if (metaMap.get(SystemConstants.LOG_TYPE)
 										.equals(SystemConstants.HTTPD_NCSA)) {
-									recommendationViewer = new RecommendationViewer(
-											metaMap);
-									recommendationViewer
-											.populateRecommendations();
 									Map<Integer, Integer> dataMap = flowController
 											.getTimeMarshalledData(messages);
 									ChartPanel panel = new LogChart()
 											.createChart(dataMap);
 									recommendationViewer.addChart(panel);
-									getRecomendationsButton().setEnabled(true);
 								}
+								getRecomendationsButton().setEnabled(true);
 								getClearButton().setEnabled(true);
 							} else {
 								JOptionPane.showMessageDialog(
@@ -346,7 +346,7 @@ public class UserInterface extends JFrame implements ActionListener {
 			clearButton.addActionListener(this);
 
 		}
-		
+
 		return clearButton;
 	}
 
