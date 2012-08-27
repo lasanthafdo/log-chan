@@ -21,6 +21,7 @@ import org.logchan.rules.RuleManager;
 import org.logchan.templates.TemplateDiscoverable;
 import org.logchan.templates.TemplateDiscoverer;
 import org.logchan.util.DataMarshallable;
+import org.logchan.util.GenericMarshaller;
 import org.logchan.util.HTTPDMarshaller;
 
 public class DefaultFlowController implements FlowControllable {
@@ -144,8 +145,6 @@ public class DefaultFlowController implements FlowControllable {
 		}
 	}
 
-
-
 	@Override
 	public Map<String, Object> getOutputData() {
 		return metaMap;
@@ -156,6 +155,9 @@ public class DefaultFlowController implements FlowControllable {
 		if(dataMarshaller == null) {
 			if(metaMap.get(SystemConstants.LOG_TYPE).equals(SystemConstants.HTTPD_NCSA)) {
 				dataMarshaller = new HTTPDMarshaller();
+			}
+			else if(metaMap.get(SystemConstants.TIMESTAMP_COL) != null) {
+				dataMarshaller = new GenericMarshaller();
 			}
 		}
 		

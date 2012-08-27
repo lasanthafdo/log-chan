@@ -19,6 +19,7 @@ public class SystemConstants {
 	public static final String LOG_DELIMITER = "Delimiter";
 	public static final String LOG_NULL_CHAR = "Null Char";
 	public static final String DERIVED_REGEX = "Regex";
+	public static final String TIMESTAMP_COL = "Column Index of Timestamp";
 	
 	public static final int UNKNOWN_FORMAT = 0;
 	public static final int HTTPD_NCSA = 1;

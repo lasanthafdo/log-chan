@@ -18,7 +18,6 @@ public class HTTPDMarshaller implements DataMarshallable {
 	@Override
 	public Map<Integer, Integer> getDataSet(List<String[]> messages,
 			Map<String, Object> metaMap) {
-		// TODO Auto-generated method stub
 		Vector<Class<?>> colTypes = (Vector<Class<?>>) metaMap
 				.get(SystemConstants.COL_DATA_TYPES);
 		int colIndex = 0;

@@ -15,5 +15,4 @@ public class SystemMappings {
 		}
 	};
 	
-	public static final Integer SIZE_TO_LINES_RATIO_LARGE = 1;
 }

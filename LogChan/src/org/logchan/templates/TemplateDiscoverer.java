@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ public class TemplateDiscoverer implements TemplateDiscoverable {
 		escapeSequences.add(new String[] { "\\[", "\\]" });
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String,Object> discoverTemplate(String filename, Long filesize)
 			throws IOException {
@@ -53,6 +55,9 @@ public class TemplateDiscoverer implements TemplateDiscoverable {
 			summaryMap.put(SystemConstants.DERIVED_REGEX, regexStr);
 			summaryMap.put(SystemConstants.IDENTIFIED_COL, (Integer)Collections.max((List<Integer>)parseMap.get("COL_COUNT")));
 			summaryMap.put(SystemConstants.COL_DATA_TYPES, ((List<Vector<?>>)parseMap.get("DATA_TYPES")).get(0));
+			if(((Vector<Class<?>>)summaryMap.get(SystemConstants.COL_DATA_TYPES)).contains(Date.class)) {
+				summaryMap.put(SystemConstants.TIMESTAMP_COL, (Integer)((Vector<Class<?>>)summaryMap.get(SystemConstants.COL_DATA_TYPES)).indexOf(Date.class));
+			}
 			summaryMap.put(SystemConstants.LOG_DELIMITER, delimiter);
 			summaryMap.put(SystemConstants.LOG_TYPE, SystemConstants.UNKNOWN_FORMAT);
 			resultMap.put(scores[j++], summaryMap);
@@ -63,6 +68,7 @@ public class TemplateDiscoverer implements TemplateDiscoverable {
 		return resultMap.get(scores[0]);
 	}
 
+	@SuppressWarnings("unchecked")
 	private Double getCandidateScore(Map<String, Collection<?>> parseMap) {
 		Double candidateScore = 0.0;
 		int stringCount = 0;
@@ -170,7 +176,7 @@ public class TemplateDiscoverer implements TemplateDiscoverable {
 		return line;
 	}
 
-	private void printParseData(Map<String, Collection<?>> parseMap,
+	protected void printParseData(Map<String, Collection<?>> parseMap,
 			String delimiter) {
 		System.out.println("-------------Start Data------------");
 		System.out.println("Delimit Char: " + delimiter);

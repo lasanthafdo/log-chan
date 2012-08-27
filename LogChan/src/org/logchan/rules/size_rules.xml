@@ -31,14 +31,17 @@
 				(standardLogRate ?rate&amp;:(&gt; ?count ?rate))
 				(OBJECT ?A))
 			=&gt;
-			(call ?G addRecommendation (new org.logchan.reports.Recommendation FALSE "The log lines are too many for this file"))
+			(bind ?recMsg (str-cat "The log line count exceeds " ?rate " lines. 
+If you are using clustering, you can use SLCT or LogHound tools. 
+SLCT is a simpler, but faster algorithm"))
+			(call ?G addRecommendation (new org.logchan.reports.Recommendation FALSE ?recMsg))
 			(printout t "Added recommendation for generic log!" crlf)
 		)		
 
 		(defrule generic-cluster
 			(org.logchan.model.GenericLog {lineCount &lt; 10000} (OBJECT ?G))
 			=&gt;
-			(call ?G addRecommendation (new org.logchan.reports.Recommendation TRUE "If clustering algorithms are used, the best algorithm is Teiresias (Use Sisyphus Toolkit)"))
+			(call ?G addRecommendation (new org.logchan.reports.Recommendation TRUE "If clustering algorithms are used, we recommend the algorithm Teiresias (Use Sisyphus Toolkit)"))
 			(printout t "Added algo recommendation for generic log!" crlf)
 		)		
 
@@ -47,7 +50,8 @@
 			 	(parsedLineCount ?plc) (OBJECT ?G))
 			(corruption-rate ?crate&amp;:(&gt;= (/ (- ?lc ?plc) ?lc) 0.0))
 			=&gt;
-			(?recMsg (- ?genericlog.lineCount genericlog.parsedLineCount) " corrupted lines found. Corruption rate is greater than 10%. You should use a clustering technique for analyzing this file.")
+			(bind ?recMsg (str-cat (- ?genericlog.lineCount genericlog.parsedLineCount) " corrupted lines found. Corruption rate is greater than 10%.
+You should use a clustering technique for analyzing this file."))
 			(call ?G addRecommendation (new org.logchan.reports.Recommandation FALSE ?recMsg))
 			(printout t "Added recommendation for corrupted lines" crlf)
 			(printout t ?crate crlf)	
