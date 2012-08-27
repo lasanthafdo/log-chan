@@ -297,7 +297,6 @@ public class UserInterface extends JFrame implements ActionListener {
 									logPatternField.getText());
 							if (!messages.isEmpty()) {
 								flowController.processRules();
-								flowController.generateRecommendations();
 								metaMap = flowController.getOutputData();
 								displayOutput((Vector<Class<?>>) metaMap
 										.get(SystemConstants.COL_DATA_TYPES));

@@ -8,15 +8,35 @@
 		(defclass org.logchan.model.WebServerLog org.logchan.model.WebServerLog)
 		(defclass org.logchan.model.SourceApplication
 		org.logchan.model.SourceApplication)
+		(defclass org.logchan.reports.Recommendation org.logchan.reports.Recommendation)
+		(defclass org.logchan.model.GenericLog org.logchan.model.GenericLog)
+		(defclass org.logchan.model.LogFile org.logchan.model.LogFile)
+		
 		(defrule size-ratio
 			?weblog &lt;- (org.logchan.model.WebServerLog
-				(lineCount ?count) (logSizeStatus ?status) 
+				(lineCount ?count) (logSizeStatus ?status)
 				(OBJECT ?W))
 			?app &lt;- (org.logchan.model.SourceApplication
 				(standardLogRate ?rate&amp;:(&gt; ?count ?rate))
 				(OBJECT ?A))
 			=&gt;
-			(modify ?weblog (logSizeStatus 1))
+			(call ?W addRecommendation (new org.logchan.reports.Recommendation FALSE "The log lines are too many for this file"))
+			(printout t "Added recommendation");
 		)
+		
+		(defrule generic-size
+			?genlog &lt;- (org.logchan.model.GenericLog
+				(lineCount ?count)
+				(OBJECT ?G))
+			?app &lt;- (org.logchan.model.SourceApplication
+				(standardLogRate ?rate&amp;:(&gt; ?count ?rate))
+				(OBJECT ?A))
+			=&gt;
+			(call ?G addRecommendation (new org.logchan.reports.Recommendation FALSE "The log lines are too many for this file"))
+			(printout t "Added recommendation");
+		)
+		
+
+		 
 	</code>
 </rule-execution-set>

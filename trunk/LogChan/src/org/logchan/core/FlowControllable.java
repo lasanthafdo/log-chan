@@ -25,8 +25,6 @@ public interface FlowControllable {
 	
 	public void processRules();
 	
-	public void generateRecommendations();
-	
 	public Map<String, Object> getOutputData();
 	
 	public Map<Integer, Integer> getTimeMarshalledData(List<String[]> messages);
