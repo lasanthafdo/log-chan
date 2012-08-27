@@ -46,15 +46,15 @@ SLCT is a simpler, but faster algorithm"))
 		)		
 
 		(defrule corrupt-lines
-			?genericlog &lt;- (org.logchan.model.GenericLog (lineCount ?lc)
-			 	(parsedLineCount ?plc) (OBJECT ?G))
-			(corruption-rate ?crate&amp;:(&gt;= (/ (- ?lc ?plc) ?lc) 0.0))
+			(org.logchan.model.GenericLog (lineCount ?lc) (parsedLineCount ?plc)
+				(OBJECT ?G))
+			(test (&lt; 0.1D (/ (- ?lc ?plc) ?lc)))
 			=&gt;
-			(bind ?recMsg (str-cat (- ?genericlog.lineCount genericlog.parsedLineCount) " corrupted lines found. Corruption rate is greater than 10%.
+			(bind ?recMsg (str-cat (- ?lc ?plc) " corrupted lines found. Corruption rate is greater than 10%.
 You should use a clustering technique for analyzing this file."))
-			(call ?G addRecommendation (new org.logchan.reports.Recommandation FALSE ?recMsg))
+			(call ?G addRecommendation (new org.logchan.reports.Recommendation FALSE ?recMsg))
 			(printout t "Added recommendation for corrupted lines" crlf)
-			(printout t ?crate crlf)	
+			(printout t (/ (- ?lc ?plc) ?lc) crlf)	
 		) 
 		 
 	</code>
