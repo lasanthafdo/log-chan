@@ -1,5 +1,6 @@
 package org.logchan.ui;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -14,8 +15,8 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -40,6 +41,7 @@ import org.logchan.core.FlowControllable;
 import org.logchan.core.LogReader;
 import org.logchan.core.SystemConstants;
 import org.logchan.core.SystemMappings;
+import org.logchan.core.UIConstants;
 import org.logchan.formats.LGCFilter;
 import org.logchan.model.TableData;
 import org.logchan.reports.LogChart;
@@ -62,6 +64,7 @@ public class UserInterface extends JFrame implements ActionListener {
 	private JButton addTemplateButton;
 	private JButton deriveTemplateButton;
 	private JButton recomendationsButton;
+	private JCheckBox showFileCheckBox;
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
 	private JMenu editMenu;
@@ -95,13 +98,19 @@ public class UserInterface extends JFrame implements ActionListener {
 		this.setJMenuBar(getLogJMenuBar());
 		GridBagConstraints constraints = new GridBagConstraints();
 
+		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridwidth = 2;
 		constraints.weightx = 0.9;
+		constraints.insets = new Insets(5, 15, 2, 2);
+		this.add(getShowFileCheckPanel(), constraints);
+
 		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.anchor = GridBagConstraints.CENTER;
+		constraints.gridy = 1;
 		constraints.insets = new Insets(2, 5, 2, 2);
 		this.add(getFileBrowsePanel(), constraints);
 
-		constraints.gridy = 1;
+		constraints.gridy = 2;
 		constraints.weighty = 0.1;
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.insets = new Insets(0, 10, 0, 10);
@@ -109,7 +118,7 @@ public class UserInterface extends JFrame implements ActionListener {
 
 		constraints.weightx = 0.1;
 		constraints.gridwidth = 1;
-		constraints.gridy = 2;
+		constraints.gridy = 3;
 		constraints.gridx = 1;
 		constraints.fill = GridBagConstraints.NONE;
 		this.add(getBottomButtons(), constraints);
@@ -119,29 +128,16 @@ public class UserInterface extends JFrame implements ActionListener {
 	private MultiSplitPane getSplitPane() throws IOException {
 		splitPane = new MultiSplitPane();
 		splitPane.getMultiSplitLayout().setModel(getMultiSplitLayout());
-		//
-		JPanel topPanel = new JPanel(new GridBagLayout());
-		JLabel logInputLabel = new JLabel("Logs");
 		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.fill = GridBagConstraints.NONE;
-		constraints.anchor = GridBagConstraints.CENTER;
-		constraints.insets = new Insets(1, 0, 1, 0);
 		constraints.weightx = 0.1;
 		constraints.weighty = 0.1;
-		constraints.gridy = 0;
-		topPanel.add(logInputLabel, constraints);
-		//
-		ScrollPane topScrollPane = new ScrollPane();
-		topScrollPane.add(getLogFileContentArea());
-		constraints.fill = GridBagConstraints.BOTH;
-		constraints.gridy = 1;
-		constraints.insets = new Insets(0, 0, 0, 0);
-		topPanel.add(topScrollPane, constraints);
-		splitPane.add(topPanel, "top");
+
+		// Display top panel
+		displayTopPanel();
 
 		// Add label for mid pane
 		JPanel midPanel = new JPanel(new GridBagLayout());
-		JLabel midProperties = new JLabel("Log format(As Regex)");
+		JLabel midProperties = new JLabel(UIConstants.MID_PANEL_LABEL);
 		constraints.fill = GridBagConstraints.NONE;
 		constraints.anchor = GridBagConstraints.CENTER;
 		constraints.insets = new Insets(1, 0, 1, 0);
@@ -153,20 +149,11 @@ public class UserInterface extends JFrame implements ActionListener {
 		constraints.gridwidth = 3;
 		constraints.insets = new Insets(0, 0, 0, 0);
 		midPanel.add(getLogPatternField(), constraints);
-		constraints.gridwidth = 1;
 		constraints.fill = GridBagConstraints.NONE;
-		constraints.anchor = GridBagConstraints.EAST;
+		constraints.anchor = GridBagConstraints.CENTER;
 		constraints.gridy = 2;
-		constraints.insets = new Insets(10, 10, 0, 0);
-		midPanel.add(getKnownStandardsCombo(), constraints);
-		constraints.gridy = 2;
-		constraints.anchor = GridBagConstraints.WEST;
-		constraints.insets = new Insets(10, 10, 0, 0);
-		midPanel.add(getRegexButtons(), constraints);
-		constraints.gridy = 2;
-		constraints.insets = new Insets(10, 10, 0, 0);
-		constraints.anchor = GridBagConstraints.WEST;
-		midPanel.add(getRunButton(), constraints);
+		constraints.insets = new Insets(5, 10, 5, 10);
+		midPanel.add(getMidPanelWidgets(), constraints);
 
 		splitPane.add(midPanel, "middle");
 
@@ -185,9 +172,6 @@ public class UserInterface extends JFrame implements ActionListener {
 		Leaf topLeaf = new Leaf("top");
 		Leaf midLeaf = new Leaf("middle");
 		Leaf bottomLeaf = new Leaf("bottom");
-		topLeaf.setWeight(0.2);
-		midLeaf.setWeight(0.01);
-		bottomLeaf.setWeight(0.79);
 		List<Node> nodes = Arrays.asList(topLeaf, new Divider(), midLeaf,
 				new Divider(), bottomLeaf);
 		Split root = new Split();
@@ -197,9 +181,31 @@ public class UserInterface extends JFrame implements ActionListener {
 		return root;
 	}
 
+	private void displayTopPanel() {
+		JPanel topPanel = new JPanel(new GridBagLayout());
+		JLabel logInputLabel = new JLabel(UIConstants.TOP_PANEL_LABEL);
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.fill = GridBagConstraints.NONE;
+		constraints.anchor = GridBagConstraints.CENTER;
+		constraints.insets = new Insets(1, 0, 1, 0);
+		constraints.weightx = 0.1;
+		constraints.weighty = 0.1;
+		constraints.gridy = 0;
+		topPanel.add(logInputLabel, constraints);
+		//
+		ScrollPane topScrollPane = new ScrollPane();
+		topScrollPane.add(getLogFileContentArea());
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.gridy = 1;
+		constraints.insets = new Insets(0, 0, 0, 0);
+		topPanel.add(topScrollPane, constraints);
+		splitPane.add(topPanel, "top");
+		splitPane.validate();
+	}
+
 	private void displayOutput(Vector<Class<?>> columnTypes) {
 		JPanel bottomPanel = new JPanel(new GridBagLayout());
-		JLabel bottomLabel = new JLabel("Parsed Output");
+		JLabel bottomLabel = new JLabel(UIConstants.BOTTOM_PANEL_LABEL);
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.gridy = 0;
 		constraints.weighty = 0.1;
@@ -255,7 +261,7 @@ public class UserInterface extends JFrame implements ActionListener {
 		}
 	}
 
-	private JEditorPane getLogFileContentArea() throws IOException {
+	private JEditorPane getLogFileContentArea() {
 		if (logFileContentArea == null) {
 			logFileContentArea = new JEditorPane();
 			logFileContentArea.setEditable(false);
@@ -281,7 +287,25 @@ public class UserInterface extends JFrame implements ActionListener {
 		return panel;
 	}
 
-	private JButton getRunButton() throws IOException {
+	private JPanel getShowFileCheckPanel() {
+		JPanel panel = new JPanel();
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.anchor = GridBagConstraints.WEST;
+		constraints.fill = GridBagConstraints.NONE;
+		constraints.weightx = 0.1;
+		constraints.gridx = 0;
+		constraints.insets = new Insets(2, 20, 2, 0);
+		panel.add(getShowFileCheckBox(), constraints);
+		constraints.gridx = 1;
+		constraints.insets = new Insets(2, 50, 2, 10);
+		panel.add(new JLabel(
+				"Do not load file to text pane (Recommended for large files)"),
+				constraints);
+
+		return panel;
+	}
+
+	private JButton getRunButton() {
 		if (runButton == null) {
 			runButton = new JButton("Process");
 			runButton.setToolTipText("Run and process selected log");
@@ -349,18 +373,18 @@ public class UserInterface extends JFrame implements ActionListener {
 		return clearButton;
 	}
 
-	private void clearOutput() {
-		int compIndex = 2;
-		if (splitPane.getComponent(compIndex) instanceof JPanel
-				&& (((JPanel) splitPane.getComponent(compIndex))
-						.getComponent(0) instanceof JLabel)) {
-			JLabel panelLabel = (JLabel) ((JPanel) splitPane
-					.getComponent(compIndex)).getComponent(0);
-			if (panelLabel.getText().equals("Parsed Output")) {
-				splitPane.remove(compIndex);
+	private JPanel getPanelWithLabel(String checkLabel) {
+		for (Component comp : splitPane.getComponents()) {
+			if (comp instanceof JPanel
+					&& (((JPanel) comp).getComponent(0) instanceof JLabel)) {
+				JLabel panelLabel = (JLabel) ((JPanel) comp).getComponent(0);
+				if (panelLabel.getText().equals(checkLabel)) {
+					return (JPanel) comp;
+				}
 			}
 		}
-		splitPane.validate();
+
+		return null;
 	}
 
 	private JButton getSourceFileBrowseButton() {
@@ -372,22 +396,26 @@ public class UserInterface extends JFrame implements ActionListener {
 						.getText());
 				int option = dialog.showOpenDialog(UserInterface.this);
 				if (option == JFileChooser.APPROVE_OPTION) {
-//					BufferedReader reader = null;
+					// BufferedReader reader = null;
+					if (filename != null && !filename.isEmpty())
+						getClearButton().doClick();
 					try {
 						filename = dialog.getSelectedFile().getAbsolutePath();
 						sourceFilePathField.setText(dialog.getSelectedFile()
 								.getAbsolutePath());
-						String content = new LogReader().readFile(filename);
-						getLogFileContentArea().setText(content);
-						
-//						reader = new BufferedReader(new InputStreamReader(
-//								new LogReader().getInputStream(filename)));
-//						Document doc = getLogFileContentArea().getDocument();
-//						String str;
-//						while ((str = reader.readLine()) != null) {
-//							doc.insertString(doc.getLength(), str + "\n", null);
-//						}
-//						reader.close();
+						if (!showFileCheckBox.isSelected()) {
+							String content = new LogReader().readFile(filename);
+							getLogFileContentArea().setText(content);
+						}
+
+						// reader = new BufferedReader(new InputStreamReader(
+						// new LogReader().getInputStream(filename)));
+						// Document doc = getLogFileContentArea().getDocument();
+						// String str;
+						// while ((str = reader.readLine()) != null) {
+						// doc.insertString(doc.getLength(), str + "\n", null);
+						// }
+						// reader.close();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -446,6 +474,17 @@ public class UserInterface extends JFrame implements ActionListener {
 		return fileChooser;
 	}
 
+	private JCheckBox getShowFileCheckBox() {
+		if (showFileCheckBox == null) {
+			showFileCheckBox = new JCheckBox();
+			showFileCheckBox.setActionCommand("FILE_SHOW");
+			showFileCheckBox.addActionListener(this);
+			showFileCheckBox.setVisible(true);
+		}
+
+		return showFileCheckBox;
+	}
+
 	private FileFilter getLgcFileFilter() {
 		if (fileFilter == null) {
 			fileFilter = new LGCFilter();
@@ -466,15 +505,28 @@ public class UserInterface extends JFrame implements ActionListener {
 		return panel;
 	}
 
-	private JPanel getRegexButtons() {
+	private JPanel getMidPanelWidgets() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.anchor = GridBagConstraints.EAST;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.weightx = 0.2;
+		constraints.anchor = GridBagConstraints.WEST;
+		constraints.insets = new Insets(2, 10, 2, 10);
+		panel.add(getKnownStandardsCombo(), constraints);
+		constraints.fill = GridBagConstraints.NONE;
 		constraints.insets = new Insets(2, 2, 2, 2);
-		panel.add(getAddRegexButton(), constraints);
 		constraints.gridx = 1;
+		panel.add(getAddRegexButton(), constraints);
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.gridx = 2;
+		constraints.insets = new Insets(2, 10, 2, 10);
 		panel.add(getDeriveTemplateButton(), constraints);
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		constraints.insets = new Insets(2, 10, 2, 10);
+		constraints.gridx = 3;
+		panel.add(getRunButton(), constraints);
+
 		return panel;
 	}
 
@@ -597,7 +649,7 @@ public class UserInterface extends JFrame implements ActionListener {
 	private JMenu getHelpMenu() {
 		helpMenu = new JMenu();
 		helpMenu.setText("Help");
-//		helpMenu.add(getHelpMenuItem());
+		// helpMenu.add(getHelpMenuItem());
 		helpMenu.add(getAboutMenuItem());
 
 		return helpMenu;
@@ -618,12 +670,12 @@ public class UserInterface extends JFrame implements ActionListener {
 		return clearMenuItem;
 	}
 
-//	private JMenuItem getHelpMenuItem() {
-//		helpMenuItem = new JMenuItem("Help");
-//		helpMenuItem.setActionCommand("HELP");
-//		helpMenuItem.addActionListener(this);
-//		return helpMenuItem;
-//	}
+	// private JMenuItem getHelpMenuItem() {
+	// helpMenuItem = new JMenuItem("Help");
+	// helpMenuItem.setActionCommand("HELP");
+	// helpMenuItem.addActionListener(this);
+	// return helpMenuItem;
+	// }
 
 	private JMenuItem getAboutMenuItem() {
 
@@ -655,18 +707,18 @@ public class UserInterface extends JFrame implements ActionListener {
 			if (recommendationViewer != null)
 				recommendationViewer.setVisible(true);
 		} else if (actionCommand.equals("CLEAR")) {
-			try {
-				clearOutput();
-				getLogFileContentArea().setText("");
-				getSourceFilePathField().setText("");
-				getLogPatternField().setText("");
-				flowController.reset();
-				getRecomendationsButton().setEnabled(false);
-				getClearButton().setEnabled(false);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			JPanel bottomPanel = getPanelWithLabel(UIConstants.BOTTOM_PANEL_LABEL);
+			if (bottomPanel != null) {
+				splitPane.remove(bottomPanel);
+				splitPane.getMultiSplitLayout().removeLayoutComponent(bottomPanel);
+				splitPane.validate();
 			}
+			getLogFileContentArea().setText("");
+			getSourceFilePathField().setText("");
+			getLogPatternField().setText("");
+			flowController.reset();
+			getRecomendationsButton().setEnabled(false);
+			getClearButton().setEnabled(false);
 		} else if (actionCommand.equals("SAVE")) {
 			JFileChooser dialog = getFileSaveDialog(filename);
 			int option = dialog.showSaveDialog(UserInterface.this);
@@ -679,12 +731,23 @@ public class UserInterface extends JFrame implements ActionListener {
 				}
 			}
 		} else if (actionCommand.equals("VIEW_ABOUT")) {
-			new AboutDialog().setVisible(true); 
+			new AboutDialog().setVisible(true);
 		} else if (actionCommand.equals("EXIT")) {
 			this.dispose();
 		} else if (actionCommand.equals("HELP")) {
 
+		} else if (actionCommand.equals("FILE_SHOW")) {
+			JPanel topPanel = getPanelWithLabel(UIConstants.TOP_PANEL_LABEL);
+			if (topPanel != null) {
+				if (showFileCheckBox.isSelected()) {
+					topPanel.setVisible(false);
+					splitPane.getMultiSplitLayout().removeLayoutComponent(topPanel);					
+				} else {
+					topPanel.setVisible(true);
+					splitPane.getMultiSplitLayout().addLayoutComponent("top", topPanel);
+				}
+				splitPane.validate();
+			}
 		}
-
 	}
 }
