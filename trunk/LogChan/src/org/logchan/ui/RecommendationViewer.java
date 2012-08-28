@@ -135,8 +135,8 @@ public class RecommendationViewer extends JDialog {
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.insets = new Insets(2, 5, 2, 5);
-		panel.add(getExportButton(), constraints);
-		constraints.gridx = 1;
+//		panel.add(getExportButton(), constraints);
+//		constraints.gridx = 1;
 		panel.add(getCloseButton(), constraints);
 		return panel;
 	}

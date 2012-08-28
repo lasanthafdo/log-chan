@@ -15,6 +15,7 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -67,7 +68,6 @@ public class UserInterface extends JFrame implements ActionListener {
 	private JMenu helpMenu;
 	private JMenuItem saveMenuItem;
 	private JMenuItem aboutMenuItem;
-	private JMenuItem helpMenuItem;
 	private JMenuItem clearMenuItem;
 	private JMenuItem exitMenuItem;
 
@@ -597,7 +597,7 @@ public class UserInterface extends JFrame implements ActionListener {
 	private JMenu getHelpMenu() {
 		helpMenu = new JMenu();
 		helpMenu.setText("Help");
-		helpMenu.add(getHelpMenuItem());
+//		helpMenu.add(getHelpMenuItem());
 		helpMenu.add(getAboutMenuItem());
 
 		return helpMenu;
@@ -618,12 +618,12 @@ public class UserInterface extends JFrame implements ActionListener {
 		return clearMenuItem;
 	}
 
-	private JMenuItem getHelpMenuItem() {
-		helpMenuItem = new JMenuItem("Help");
-		helpMenuItem.setActionCommand("HELP");
-		helpMenuItem.addActionListener(this);
-		return helpMenuItem;
-	}
+//	private JMenuItem getHelpMenuItem() {
+//		helpMenuItem = new JMenuItem("Help");
+//		helpMenuItem.setActionCommand("HELP");
+//		helpMenuItem.addActionListener(this);
+//		return helpMenuItem;
+//	}
 
 	private JMenuItem getAboutMenuItem() {
 
@@ -679,16 +679,11 @@ public class UserInterface extends JFrame implements ActionListener {
 				}
 			}
 		} else if (actionCommand.equals("VIEW_ABOUT")) {
+			new AboutDialog().setVisible(true); 
 		} else if (actionCommand.equals("EXIT")) {
 			this.dispose();
 		} else if (actionCommand.equals("HELP")) {
-			try {
-				File f = new File(".");
-				String path = f.getCanonicalPath() + "\\help.html";
-				Runtime.getRuntime().exec(
-						"rundll32 url.dll,FileProtocolHandler " + path);
-			} catch (Exception e1) {
-			}
+
 		}
 
 	}
