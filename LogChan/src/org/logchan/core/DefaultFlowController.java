@@ -26,7 +26,7 @@ import org.logchan.util.HTTPDMarshaller;
 
 public class DefaultFlowController implements FlowControllable {
 
-	private static volatile DefaultFlowController instance = null;
+	private static DefaultFlowController instance = null;
 	private final String header = "IP\t User\t Login\t Date-Time\t URL\t\t\t Response Code\t Bytes\t Referrer\t\t\t Client";
 
 	private List<String[]> messages;
