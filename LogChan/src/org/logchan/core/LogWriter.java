@@ -29,11 +29,11 @@ public class LogWriter {
 			boolean first = true;
 			for(Class<?> dataType: dataTypes) {
 				if(first) {
-					out.print(dataType.getName());
+					out.print(dataType.getSimpleName());
 					first = false;
 				}
 				else
-					out.print("," + dataType.getName());
+					out.print("," + dataType.getSimpleName());
 			}
 			out.println();
 			out.println(SystemConstants.META_DATA_END);
@@ -41,11 +41,9 @@ public class LogWriter {
 			for(String[] logEntry: messages) {
 				String[] clone = logEntry.clone();
 				for(int i=0; i < clone.length; i++)
-					clone[i] = dataTypes.get(i).getSimpleName() + "[" + clone[i] + "]";
+					clone[i] = "[" + clone[i] + "]";
 				out.println(StringUtils.join(clone, ','));
 			}
-			
-
 			
 			out.close();
 		}
