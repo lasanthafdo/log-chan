@@ -40,6 +40,7 @@ public class TemplateDiscoverer implements TemplateDiscoverable {
 		Double[] scores = new Double[defaultDelimitChars.length];
 		Map<Double, Map<String, Object>> resultMap = new HashMap<Double, Map<String,Object>>();
 		RandomAccessFile raFile = new RandomAccessFile(new File(filename), "r");
+		samples.clear();
 		for (int i = 0; i < sampleCount; i++) {
 			String line = readRandomLine(raFile, filesize);
 			if (line != null)
