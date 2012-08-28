@@ -102,7 +102,9 @@ public class RegexLogParser implements LogParseable {
 
 	@Override
 	public Vector<Class<?>> deriveColumnTypes(InputStream is) {
-		// TODO Auto-generated method stub
+		if(metaData != null && metaData.get(SystemConstants.COL_DATA_TYPES) != null)
+			return (Vector<Class<?>>)metaData.get(SystemConstants.COL_DATA_TYPES);
+		
 		return null;
 	}
 

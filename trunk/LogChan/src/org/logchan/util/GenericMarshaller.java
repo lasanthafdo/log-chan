@@ -1,5 +1,6 @@
 package org.logchan.util;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,17 +34,16 @@ public class GenericMarshaller implements DataMarshallable {
 	private Map<Integer, Integer> classifyData(List<String[]> messages,
 			int colIndex) {
 		Map<Integer, Integer> dataMap = new LinkedHashMap<Integer, Integer>();
-		DateFormat dateFormat = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss Z");
 		Calendar endCal = Calendar.getInstance();
 		try {
 			Integer classCount = 0;
-			endCal.setTime(dateFormat.parse(messages.get(0)[colIndex]));
+			endCal.setTime(DateConverter.valueOf((messages.get(0)[colIndex])));
 			endCal.add(Calendar.HOUR_OF_DAY, 1);
 			int endHour =endCal.get(Calendar.HOUR_OF_DAY);  
 			boolean countAdded = false;
 			for (String[] strArray : messages){
 				Calendar currentCal = Calendar.getInstance();
-				currentCal.setTime(dateFormat.parse(strArray[colIndex]));
+				currentCal.setTime(DateConverter.valueOf((strArray[colIndex])));
 				countAdded = false;
 				if(currentCal.before(endCal)) {
 					classCount++;
@@ -65,7 +65,7 @@ public class GenericMarshaller implements DataMarshallable {
 				dataMap.put( endHour, classCount);
 			}
 			
-		} catch (ParseException e) {
+		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return dataMap;

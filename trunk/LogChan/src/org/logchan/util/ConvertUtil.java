@@ -19,9 +19,9 @@ public class ConvertUtil {
 		primitiveMap.put(SupportedTypes.T_SHORT, Short.class);
 		primitiveMap.put(SupportedTypes.T_INTEGER, Integer.class);
 		primitiveMap.put(SupportedTypes.T_LONG, Long.class);
+		primitiveMap.put(SupportedTypes.TC_JAVA_DATE, DateConverter.class);
 		primitiveMap.put(SupportedTypes.T_FLOAT, Float.class);
 		primitiveMap.put(SupportedTypes.T_DOUBLE, Double.class);
-		primitiveMap.put(SupportedTypes.TC_JAVA_DATE, DateConverter.class);
 	}
 
 	/**
