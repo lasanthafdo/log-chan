@@ -1,5 +1,8 @@
 package org.logchan.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SystemConstants {
 	public static final int MATCH_ENTIRE_REGION = 0;
 	public static final int MATCH_FROM_START = 1;
@@ -27,4 +30,30 @@ public class SystemConstants {
 
 	public static final String META_DATA_HEAD = "/~BEGIN META DATA~/";
 	public static final String META_DATA_END = "/~END META DATA~/";
+	
+	public static final Map<Character, Character> ESCAPE_CHARS = new HashMap<Character, Character>() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2864195449391231854L;
+
+		{
+			put('[',']');
+			put('"','"');
+			put('(',')');
+			put('{','}');
+		}
+	};
+	
+	public static final Map<Character, String[]> REGEX_ESCAPE_CHARS = new HashMap<Character, String[]>() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -91105324597276504L;
+
+		{
+			put('[', new String[] { "\\[", "\\]" });
+			put('"', new String[] { "\"", "\"" });
+		}
+	};
 }

@@ -21,7 +21,7 @@ import org.logchan.util.ConvertUtil;
 
 public class TemplateDiscoverer implements TemplateDiscoverable {
 
-	private String[] defaultDelimitChars = { ",", "\\s", ";" };
+	private String[] defaultDelimitChars = { ",", "\\s", ";" ,":"};
 	private List<String[]> escapeSequences;
 	private int sampleCount = 10;
 	private List<String> samples;
@@ -29,8 +29,33 @@ public class TemplateDiscoverer implements TemplateDiscoverable {
 	public TemplateDiscoverer() {
 		samples = new ArrayList<String>();
 		escapeSequences = new ArrayList<String[]>();
-		escapeSequences.add(new String[] { "\"", "\"" });
-		escapeSequences.add(new String[] { "\\[", "\\]" });
+	}
+	
+	protected List<String> getSamples() {
+		return this.samples;
+	}
+	
+	protected List<String[]> getEscapeSequences() {
+		return this.escapeSequences;
+	}
+	
+	protected void addEscapeSequence(String[] seqArray) {
+		if(seqArray != null)
+			escapeSequences.add(seqArray);
+		else
+			throw new NullPointerException("The String array passed in cannot be null");
+	}
+	
+	protected void readSampleLines(String filename, Long filesize) throws IOException {
+		RandomAccessFile raFile = new RandomAccessFile(new File(filename), "r");
+		samples.clear();
+		for (int i = 0; i < sampleCount;) {
+			String line = readRandomLine(raFile, filesize);
+			if (line != null) {
+				samples.add(line);
+				i++;
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -39,13 +64,11 @@ public class TemplateDiscoverer implements TemplateDiscoverable {
 			throws IOException {
 		Double[] scores = new Double[defaultDelimitChars.length];
 		Map<Double, Map<String, Object>> resultMap = new HashMap<Double, Map<String,Object>>();
-		RandomAccessFile raFile = new RandomAccessFile(new File(filename), "r");
-		samples.clear();
-		for (int i = 0; i < sampleCount; i++) {
-			String line = readRandomLine(raFile, filesize);
-			if (line != null)
-				samples.add(line);
-		}
+		readSampleLines(filename, filesize);
+		
+		escapeSequences.clear();
+		escapeSequences.add(new String[] { "\"", "\"" });
+		escapeSequences.add(new String[] { "\\[", "\\]" });
 
 		int j = 0;
 		for (String delimiter : defaultDelimitChars) {
@@ -70,7 +93,7 @@ public class TemplateDiscoverer implements TemplateDiscoverable {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Double getCandidateScore(Map<String, Collection<?>> parseMap) {
+	protected Double getCandidateScore(Map<String, Collection<?>> parseMap) {
 		Double candidateScore = 0.0;
 		int stringCount = 0;
 		int otherCount = 0;
@@ -97,7 +120,7 @@ public class TemplateDiscoverer implements TemplateDiscoverable {
 		return candidateScore;
 	}
 
-	private Map<String, Collection<?>> parseFor(String regexStr) {
+	protected Map<String, Collection<?>> parseFor(String regexStr) {
 		Map<String, Collection<?>> parseData = new HashMap<String, Collection<?>>();
 		List<String[]> splitList = new ArrayList<String[]>();
 		List<Integer> colCounts = new ArrayList<Integer>();
@@ -137,7 +160,7 @@ public class TemplateDiscoverer implements TemplateDiscoverable {
 		return parseData;
 	}
 
-	private String buildRegularExpression(String delimitChar,
+	protected String buildRegularExpression(String delimitChar,
 			List<String[]> escapeSequences) {
 		String regex = "[^" + delimitChar;
 		List<String> escapeGroups = new ArrayList<String>();
