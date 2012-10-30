@@ -18,6 +18,9 @@ public class LogWriter {
 			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
 			Vector<Class<?>> dataTypes = (Vector<Class<?>>)metaData.get(SystemConstants.COL_DATA_TYPES);
 			
+			/** Disabling meta data for now 
+			  
+			 
 			out.println(SystemConstants.META_DATA_HEAD);
 			for(String key: metaData.keySet()) {
 				Object value = metaData.get(key);
@@ -37,6 +40,7 @@ public class LogWriter {
 			}
 			out.println();
 			out.println(SystemConstants.META_DATA_END);
+			*/
 			
 			for(String[] logEntry: messages) {
 				String[] clone = logEntry.clone();
