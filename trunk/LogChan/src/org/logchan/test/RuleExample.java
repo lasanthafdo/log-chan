@@ -9,13 +9,10 @@ import java.util.List;
 import javax.rules.RuleRuntime;
 import javax.rules.RuleServiceProvider;
 import javax.rules.RuleServiceProviderManager;
-import javax.rules.StatefulRuleSession;
 import javax.rules.StatelessRuleSession;
 import javax.rules.admin.RuleAdministrator;
 import javax.rules.admin.RuleExecutionSet;
 
-import org.jcp.jsr94.tck.model.Customer;
-import org.jcp.jsr94.tck.model.Invoice;
 import org.logchan.model.SourceApplication;
 import org.logchan.model.WebServerLog;
 import org.logchan.rules.RuleManager;
@@ -180,95 +177,7 @@ public class RuleExample {
 			statelessRuleSession.release();
 
 			System.out.println("Released Stateless Rule Session.");
-
-			// Create a statefulRuleSession.
-
-			StatefulRuleSession statefulRuleSession =
-
-			(StatefulRuleSession) ruleRuntime.createRuleSession(uri,
-
-			new HashMap(), RuleRuntime.STATEFUL_SESSION_TYPE);
-
-			System.out.println("Got Stateful Rule Session: "
-					+ statefulRuleSession);
-
-			// Add another invoice.
 			
-			Customer inputCustomer = new Customer("test");
-			inputCustomer.setCreditLimit(2000);
-
-			Invoice inputInvoice2 = new Invoice("Invoice 2");
-
-			inputInvoice2.setAmount(1750);
-
-			input.add(inputCustomer);
-			input.add(inputInvoice2);
-
-			System.out.println("Calling rule session with the following data");
-
-			System.out.println("Customer credit limit input: " +
-
-			inputCustomer.getCreditLimit());
-
-			System.out.println(inputInvoice2.getDescription() +
-
-			" amount: " + inputInvoice2.getAmount() +
-
-			" status: " + inputInvoice2.getStatus());
-
-			// Add an object to the statefulRuleSession.
-
-			statefulRuleSession.addObjects(input);
-
-			System.out.println("Called addObject on Stateful Rule Session: " +
-
-			statefulRuleSession);
-
-			statefulRuleSession.executeRules();
-
-			System.out.println("Called executeRules");
-
-			// Extract the objects from the statefulRuleSession.
-
-			results = statefulRuleSession.getObjects();
-
-			System.out.println("Result of calling getObjects: "
-					+ results.size() +
-
-					" results.");
-
-			// Loop over the results.
-
-			itr = results.iterator();
-
-			while (itr.hasNext()) {
-
-				Object obj = itr.next();
-
-				if (obj instanceof Customer)
-
-					System.out.println("Customer credit limit result: " +
-
-					((Customer) obj).getCreditLimit());
-
-				if (obj instanceof Invoice)
-
-					System.out.println(((Invoice) obj).getDescription() +
-
-					" amount: " + ((Invoice) obj).getAmount() +
-
-					" status: " + ((Invoice) obj).getStatus());
-
-			}
-
-			// Release the statefulRuleSession.
-
-			statefulRuleSession.release();
-
-			System.out.println("Released Stateful Rule Session.");
-
-			System.out.println();
-
 		} catch (NoClassDefFoundError e) {
 
 			if (e.getMessage().indexOf("JessException") != -1) {

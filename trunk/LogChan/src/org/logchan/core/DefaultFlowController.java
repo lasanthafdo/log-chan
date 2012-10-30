@@ -19,7 +19,7 @@ import org.logchan.model.LogFile;
 import org.logchan.model.ModelHandleable;
 import org.logchan.rules.RuleManager;
 import org.logchan.templates.TemplateDiscoverable;
-import org.logchan.templates.TimeStampBasedDiscoverer;
+import org.logchan.templates.TemplateDiscoverer;
 import org.logchan.util.DataMarshallable;
 import org.logchan.util.GenericMarshaller;
 import org.logchan.util.HTTPDMarshaller;
@@ -57,7 +57,7 @@ public class DefaultFlowController implements FlowControllable {
 		modelHandler = new DefaultModelHandler();
 		ruleManager = new RuleManager();
 		dataMarshaller = null;
-		tempDiscoverer = new TimeStampBasedDiscoverer();
+		tempDiscoverer = new TemplateDiscoverer();
 	}
 
 	@Override

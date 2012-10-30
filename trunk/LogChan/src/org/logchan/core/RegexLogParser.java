@@ -49,11 +49,15 @@ public class RegexLogParser implements LogParseable {
 				totalBytes += line.length();
 				regexMatcher = regex.matcher(line);
 				while (regexMatcher.find()) {
-					if (regexMatcher.group(1) != null) {
-						matchList.add(regexMatcher.group(1));
-					} else if (regexMatcher.group(2) != null) {
-						matchList.add(regexMatcher.group(2));
-					} else {
+					boolean added = false;
+					for(int i=1; i<= regexMatcher.groupCount(); i++) {
+						if(regexMatcher.group(i) != null) {
+							matchList.add(regexMatcher.group(i));
+							added = true;
+							break;
+						}
+					}
+					if(!added) {
 						matchList.add(regexMatcher.group());
 					}
 				}
